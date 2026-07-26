@@ -45,6 +45,9 @@ describe('area selection noop (feature not registered)', () => {
 describe('area selection feature', () => {
     beforeAll(() => {
         lib.registerFeature(lib.useAreaSelection);
+        // jsdom 缺少 clipboard，elementFromPoint 调用会抛错；源码与 vue 版保持一致不做防御，测试中补齐
+        Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+        document.elementFromPoint = vi.fn().mockReturnValue(null);
     });
 
     it('applies area-selection class and tabindex when enabled', async () => {

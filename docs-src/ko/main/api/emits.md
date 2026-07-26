@@ -1,0 +1,233 @@
+# Emits 이벤트
+
+svelte 버전에서는 이벤트가 콜백 prop 형식으로 제공됩니다 (전부 소문자, 하이픈 없음). 괄호 안은 vue 버전의 대응 이벤트명입니다.
+
+## API
+
+### onsortchange (sort-change)
+
+정렬 변경 시トリ거. defaultSort.dataIndex를 찾을 수 없으면 col은 null 반환.
+
+```ts
+onsortchange?: (col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>) => void;
+```
+
+### onrowclick (row-click)
+
+행 클릭 이벤트.
+
+```ts
+onrowclick?: (ev: MouseEvent, row: DT, data: { rowIndex: number }) => void;
+```
+
+### oncurrentchange (current-change)
+
+행 선택 시トリ거. ev가 null 반환되면 클릭 이벤트가 아닌 것을 의미.
+
+```ts
+oncurrentchange?: (ev: MouseEvent | null, row: DT | undefined, data: { select: boolean }) => void;
+```
+
+### oncellselected (cell-selected)
+
+셀 선택 시トリ거. ev가 null 반환되면 클릭 이벤트가 아닌 것을 의미.
+
+```ts
+oncellselected?: (ev: MouseEvent | null, data: { select: boolean; row: DT | undefined; col: StkTableColumn<DT> | undefined }) => void;
+```
+
+### onrowdblclick (row-dblclick)
+
+행 더블 클릭 이벤트.
+
+```ts
+onrowdblclick?: (ev: MouseEvent, row: DT, data: { rowIndex: number }) => void;
+```
+
+### onheaderrowmenu (header-row-menu)
+
+헤더 우클릭 이벤트.
+
+```ts
+onheaderrowmenu?: (ev: MouseEvent) => void;
+```
+
+### onrowmenu (row-menu)
+
+본문 행 우클릭 이벤트.
+
+```ts
+onrowmenu?: (ev: MouseEvent, row: DT, data: { rowIndex: number }) => void;
+```
+
+### oncellclick (cell-click)
+
+셀 클릭 이벤트.
+
+```ts
+oncellclick?: (ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }) => void;
+```
+
+### oncellmouseenter (cell-mouseenter)
+
+셀 마우스 진입 이벤트.
+
+```ts
+oncellmouseenter?: (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+```
+
+### oncellmouseleave (cell-mouseleave)
+
+셀 마우스 이탈 이벤트.
+
+```ts
+oncellmouseleave?: (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+```
+
+### oncellmouseover (cell-mouseover)
+
+셀 호버 이벤트.
+
+```ts
+oncellmouseover?: (ev: MouseEvent, row: DT, col: StkTableColumn<DT>) => void;
+```
+
+### oncellmousedown (cell-mousedown)
+
+셀 마우스 누름 이벤트.
+
+```ts
+oncellmousedown?: (ev: MouseEvent, row: DT, col: StkTableColumn<DT>, data: { rowIndex: number }) => void;
+```
+
+### onheadercellclick (header-cell-click)
+
+헤더 셀 클릭 이벤트.
+
+```ts
+onheadercellclick?: (ev: MouseEvent, col: StkTableColumn<DT>) => void;
+```
+
+### ontablescroll (scroll)
+
+테이블 스크롤 이벤트.
+
+```ts
+ontablescroll?: (ev: Event, data: { startIndex: number; endIndex: number }) => void;
+```
+
+### onscrollx (scroll-x)
+
+테이블 가로 스크롤 이벤트.
+
+```ts
+onscrollx?: (ev: Event) => void;
+```
+
+### oncolorderchange (col-order-change)
+
+헤더 열 드래그 이벤트.
+
+```ts
+oncolorderchange?: (dragStartKey: string, targetColKey: string) => void;
+```
+
+### onthdragstart (th-drag-start)
+
+헤더 열 드래그 시작.
+
+```ts
+onthdragstart?: (dragStartKey: string) => void;
+```
+
+### onthdrop (th-drop)
+
+헤더 열 드래그 드롭.
+
+```ts
+onthdrop?: (targetColKey: string) => void;
+```
+
+### onroworderchange (row-order-change)
+
+행 드래그 이벤트.
+
+```ts
+onroworderchange?: (dragStartKey: string, targetRowKey: string) => void;
+```
+
+### oncolresize (col-resize)
+
+열 너비 변경 시トリ거.
+
+```ts
+oncolresize?: (col: StkTableColumn<DT>) => void;
+```
+
+### onfilterchange (filter-change)
+
+필터 상태 변경 시 트리거됩니다. `setFilter` 메서드를 호출하여 필터 상태를 설정할 때만 이 콜백이 트리거됩니다.
+
+```ts
+onfilterchange?: (status: Record<UniqKey, FilterStatus>) => void;
+```
+
+### ontogglerowexpand (toggle-row-expand)
+
+확장 행 트리거.
+
+```ts
+ontogglerowexpand?: (data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }) => void;
+```
+
+### ontoggletreeexpand (toggle-tree-expand)
+
+트리 행 확장 클릭 트리거.
+
+```ts
+ontoggletreeexpand?: (data: { expanded: boolean; row: DT; col: StkTableColumn<DT> | null }) => void;
+```
+
+### onareaselectionchange (area-selection-change)
+
+셀 선택 영역 변경 이벤트.
+
+```ts
+onareaselectionchange?: (ranges: AreaSelectionRange[]) => void;
+```
+
+#### AreaSelectionRange
+
+셀 선택 영역 타입. 각 선택 영역은 `index` 필드를 통해 테이블 내에서 덮는 셀 범위를 설명합니다.
+
+```ts
+type AreaSelectionRange = {
+    index: {
+        /** 열 인덱스 범위 [시작 열, 끝 열] (양쪽 끝 포함) @deprecated begin/end를 사용하세요 */
+        x: [number, number];
+        /** 행 인덱스 범위 [시작 행, 끝 행] (양쪽 끝 포함) @deprecated begin/end를 사용하세요 */
+        y: [number, number];
+        /** 선택 영역 시작점 인덱스 */
+        begin: { row: number; col: number };
+        /** 선택 영역 끝점 인덱스 */
+        end: { row: number; col: number };
+    };
+};
+```
+
+| 필드 | 타입 | 설명 |
+| --- | --- | --- |
+| index.x | `[number, number]` | 선택 영역이 덮는 열 인덱스 범위, `[시작 열, 끝 열]`, 양쪽 끝 포함. 사용 중단, begin/end를 사용하세요 |
+| index.y | `[number, number]` | 선택 영역이 덮는 행 인덱스 범위, `[시작 행, 끝 행]`, 양쪽 끝 포함. 사용 중단, begin/end를 사용하세요 |
+| index.begin | `{ row: number; col: number }` | 선택 영역 시작점 인덱스 |
+| index.end | `{ row: number; col: number }` | 선택 영역 끝점 인덱스 |
+
+Ctrl 다중 선택 또는 Shift 범위 선택을 사용할 때 `ranges`에는 여러 선택 영역이 포함될 수 있습니다.
+
+### onupdatecolumns (update:columns)
+
+col resize 시 너비 업데이트. `columns` prop과 함께 사용하며, 콜백에서 외부의 columns 데이터를 업데이트합니다.
+
+```ts
+onupdatecolumns?: (cols: StkTableColumn<DT>[]) => void;
+```

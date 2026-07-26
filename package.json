@@ -11,7 +11,10 @@
         "dev": "vite",
         "build": "vite build",
         "test": "vitest",
-        "check": "svelte-check --tsconfig ./tsconfig.json"
+        "check": "svelte-check --tsconfig ./tsconfig.json",
+        "docs:dev": "vitepress dev docs-src",
+        "docs:build": "vitepress build docs-src",
+        "docs:preview": "vitepress preview docs-src"
     },
     "keywords": [
         "svelte",
@@ -30,18 +33,25 @@
         "svelte": ">=5.0.0"
     },
     "devDependencies": {
-        "@sveltejs/vite-plugin-svelte": "^5.0.0",
+        "@chenglou/pretext": "^0.0.8",
+        "@sveltejs/vite-plugin-svelte": "^7.2.0",
         "@testing-library/jest-dom": "^7.0.0",
         "@testing-library/svelte": "^5.2.0",
         "@testing-library/user-event": "^14.6.1",
-        "@tsconfig/svelte": "^5.0.4",
+        "@tsconfig/svelte": "^5.0.8",
+        "@types/mockjs": "^1.0.10",
+        "ja-contextmenu": "^1.11.0",
         "jsdom": "^25.0.0",
         "less": "^4.2.0",
-        "svelte": "^5.20.0",
-        "svelte-check": "^4.1.0",
-        "typescript": "^5.7.0",
-        "vite": "^6.0.0",
-        "vitest": "^3.0.0"
+        "mitt": "^3.0.1",
+        "mockjs": "^1.1.0",
+        "svelte": "^5.56.8",
+        "svelte-check": "^4.7.3",
+        "typescript": "^7.0.2",
+        "vite": "^8.1.5",
+        "vitepress": "2.0.0-alpha.18",
+        "vitepress-demo-plugin": "file:../vitepress-demo-plugin/packages/plugin",
+        "vitest": "^4.1.10"
     },
     "packageManager": "pnpm@8.15.1+sha1.8adba2d20330c02d3856e18c4eb3819d1d3ca6aa"
 }

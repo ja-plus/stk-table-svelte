@@ -1,0 +1,197 @@
+# Sorting
+
+## Basic Sorting
+Set `StkTableColumn['sorter']` to `true` in column configuration to enable sorting.
+
+Click the table header to trigger sorting.
+<demo svelte="basic/sort/Sort.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/Sort.svelte"></demo>
+
+## Custom Sorting
+`StkTableColumn['sorter']` can be set to a function in column configuration.
+
+Customize sorting rules through `sorter(data, { column, order })`.
+
+This function will be triggered during sorting, and the table will display using the **return value** of the function.
+
+| Parameter | Type | Description |
+| ---- | ---- | ---- |
+| data| DataType[] | Table data. |
+| column | StkTableColumn | Currently sorted column.
+| order | `'desc'` \| `'asc'` \| `null` | Current sorting order.
+
+The following table customizes the size sorting rules for the `Rate` column field.
+<demo svelte="basic/sort/CustomSort.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/CustomSort.svelte"></demo>
+
+For more sorting methods, please refer to [Custom Sorting](/en/main/table/advanced/custom-sort)
+
+## sortField Sorting Field
+Some fields may use independent fields for sorting, such as year, month, and day fields. In this case, you can provide a special sorting field where year and month are converted to the smallest unit (day) for easy sorting. Specify this sorting field through `sortField`.
+
+The `period` column in the following table specifies `periodNumber` as the sorting field.
+<demo svelte="basic/sort/SortField.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/SortField.svelte"></demo>
+
+## Empty Fields Excluded from Sorting
+Configure `props.sortConfig.emptyToBottom` to always place empty fields at the bottom of the list
+```svelte
+<StkTable sortConfig={{emptyToBottom: true}}></StkTable>
+```
+<demo svelte="basic/sort/SortEmptyValue.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/SortEmptyValue.svelte"></demo>
+
+## Specify Default Sort Column
+Configure `props.sortConfig.defaultSort` to control the default sorting.
+::: warning
+When default sorting is set, if **no sorting is applied**, it will sort by the **default sort** field.
+
+Click on the `Name` column in the table below to observe its behavior.
+:::
+<demo svelte="basic/sort/DefaultSort.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/DefaultSort.svelte"></demo>
+
+## Using localCompare for String Sorting
+After configuring `props.sortConfig.stringLocaleCompare = true`, strings will be sorted using [`String.prototype.localeCompare`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/localeCompare).
+
+Effect: Chinese characters will be sorted according to the first letter of their pinyin.
+
+## Server-side Sorting
+
+Set `props.sortRemote` to `true`, which will not trigger the component's internal sorting logic.
+
+After clicking the table header, the `onsortchange` callback will be triggered. You can initiate an ajax request in the callback, then reassign `props.dataSource` to complete the sorting.
+
+```svelte
+<StkTable sortRemote></StkTable>
+```
+<demo svelte="basic/sort/SortRemote.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/SortRemote.svelte"></demo>
+
+## Tree Node Deep Sorting
+After configuring `props.sortConfig.sortChildren = true`, when clicking on the table header to sort, the `children` sub-nodes will also be sorted.
+
+<demo svelte="basic/sort/SortChildren.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/SortChildren.svelte"></demo>
+
+## Multi-column Sorting <Badge type="tip" text="^0.11.2" />
+
+Configure `props.sortConfig.multiSort = true` to enable multi-column sorting mode.
+
+In multi-column sorting mode:
+- Clicking different columns will maintain multiple sorting conditions simultaneously
+- Columns clicked first have higher priority (sorted by that column first during sorting)
+- Click the same column again to toggle sorting direction (desc → asc → null)
+- Third click cancels sorting for that column
+- Can limit maximum number of sorting columns via `props.sortConfig.multiSortLimit` (default 3)
+
+<demo svelte="basic/sort/MultiSort.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/MultiSort.svelte"></demo>
+
+## API
+### StkTableColumn Configuration
+
+Sorting-related parameters in `StkTableColumn` column configuration.
+
+```ts
+const columns: StkTableColumn[] = [{
+    sorter: true,
+    sortField: 'xxx',
+    sortType: 'number',
+    sortConfig: Omit<SortConfig<T>, 'defaultSort'>;
+}]
+```
+
+| Parameter | Type | Default | Description |
+| ---- | ---- | ---- | ---- |
+| sorter | `boolean` \| `((data: T[], option: { order: Order; column: any }) => T[])` | `false` | Specify whether to enable sorting. Set to `true` for basic sorting, or a function for custom sorting rules. |
+| sortField | `string` | Same as `dataIndex` | Specify the sorting field. Use when you need to sort by a different field than the display field. |
+| sortType | `'string'` \| `'number'` | Auto-detect | Specify the sorting type. Automatically detects the data type of the first row by default. |
+| sortConfig | `Omit<SortConfig<T>, 'defaultSort'>` | - | Configure sorting rules at the column level. Higher priority than global `props.sortConfig`. |
+
+### props.sortConfig
+
+Global sorting configuration.
+
+```ts
+type SortConfig<T extends Record<string, any>> = {
+    /**
+     * Default sorting (1. Triggered during initialization 2. Triggered when sorting direction is null)
+     * Similar to clicking the table header via setSorter during onMounted.
+     */
+    defaultSort?: {
+        /** Column unique key. If `props.colKey` is configured, this represents the column unique key value */
+        key?: StkTableColumn<T>['key'];
+        /** Sorting field */
+        dataIndex: StkTableColumn<T>['dataIndex'];
+        /** Sorting order */
+        order: Order;
+        /** Specify sorting field */
+        sortField?: StkTableColumn<T>['sortField'];
+        /** Sorting type */
+        sortType?: StkTableColumn<T>['sortType'];
+        /** Custom sorting function */
+        sorter?: StkTableColumn<T>['sorter'];
+        /** Whether to disable triggering sort-change event, default false */
+        silent?: boolean;
+    };
+    /** Empty values are always placed at the end of the list */
+    emptyToBottom?: boolean;
+    /** Use String.prototype.localeCompare for string sorting, default false */
+    stringLocaleCompare?: boolean;
+    /** Whether to also sort child nodes, default false */
+    sortChildren?: boolean;
+    /** Whether to enable multi-column sorting, default false */
+    multiSort?: boolean;
+    /** Maximum number of columns for multi-column sorting, default 3 */
+    multiSortLimit?: number;
+};
+```
+
+| Parameter | Type | Default | Description |
+| ---- | ---- | ---- | ---- |
+| defaultSort | `object` | - | Default sorting configuration. Triggered during initialization and when sorting order is null. |
+| defaultSort.key | `string` | - | Column unique key. |
+| defaultSort.dataIndex | `string` | - | Sorting field, **required**. |
+| defaultSort.order | `Order` | - | Sorting order: `'asc'` \| `'desc'` \| `null`, **required**. |
+| defaultSort.silent | `boolean` | `false` | Whether to disable triggering `onsortchange` callback. |
+| emptyToBottom | `boolean` | `false` | Whether empty values are always placed at the bottom of the list. |
+| stringLocaleCompare | `boolean` | `false` | Whether to use `localeCompare` for string sorting (Chinese characters sorted by pinyin). |
+| sortChildren | `boolean` | `false` | For tree data, whether to also sort child nodes. |
+| multiSort | `boolean` | `false` | Whether to enable multi-column sorting mode. |
+| multiSortLimit | `number` | `3` | Maximum number of columns allowed in multi-column sorting. |
+
+### onsortchange (sort-change)
+Callback prop type:
+```ts
+/**
+ * Triggered when sorting changes. When defaultSort.dataIndex is not found, col will return null.
+ *
+ * ```(col: StkTableColumn<DT> | null, order: Order, data: DT[], sortConfig: SortConfig<DT>)```
+ */
+onsortchange?: (
+    /** Sorting column */
+    col: StkTableColumn<DT> | null,
+    /** Ascending/descending order */
+    order: Order,
+    /** Sorted values */
+    data: DT[],
+    sortConfig: SortConfig<DT>
+) => void;
+
+```
+
+### Expose
+Obtain the component instance via `bind:this` and then call:
+```ts
+/**
+ * Set table header sorting state
+ */
+stkTableRef?.setSorter
+/**
+ * Reset sorter state
+ */
+stkTableRef?.resetSorter
+/**
+ * Table sort column order
+ */
+stkTableRef?.getSortColumns
+/**
+ * Multi-column sorting state array (used in multi-column sorting mode)
+ */
+stkTableRef?.sortStates
+```
+For details, see [Expose Instance Methods](/en/main/api/expose)
+

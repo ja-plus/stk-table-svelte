@@ -1,0 +1,56 @@
+# 列宽调整
+
+## 配置
+* `props.colResizable` 即可打开列宽调整。
+* `props.columns` 需要配合 `onupdatecolumns` 回调，列宽修改后会直接变更 `StkTableColumn['width']` 的值。
+* `columns` 需要用 `$state` 包裹，以支持响应式。
+
+```js
+<StkTable
+    colResizable // [!code ++]
+    {columns}
+    onupdatecolumns={cols => (columns = cols)} // [!code ++]
+></StkTable>
+```
+
+::: warning
+打开列宽调整后，列宽不会默认铺满容器 。
+:::
+
+<demo svelte="advanced/column-resize/ColResizable.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/column-resize/ColResizable.svelte"></demo>
+
+
+## 通过事件更改列宽
+```ts
+/**
+ * 列宽变动时触发
+ *
+ *  ```(col: StkTableColumn<DT>)```
+ */
+oncolresize: (col: StkTableColumn<DT>) => void;
+```
+
+这样，您可以不用配置 `onupdatecolumns` 回调，手动更新 `StkTableColumn['width']` 的值即可。
+
+## 列宽铺满容器hack方式
+如果您希望列宽铺满容器，可以通过css设置 `.stk-table-main` 为 `flex: 1`，这样表格将铺满容器。
+
+然后把某一列 `width` 替换为 `minWidth`，这样这一列就会自动占满剩余宽度，其他列依然是设置的宽度 。
+
+通过 `props.colResizable.disabled`禁用最后一列的拖动列宽调整。
+
+下面的 demo 设置了最后一列的 minWidth。
+<demo svelte="advanced/column-resize/ColResizableFullHack.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/column-resize/ColResizableFullHack.svelte"></demo>
+
+
+## API
+### props.colResizable:
+| type | 说明 |
+| --- | --- | 
+| boolean | 是否开启列宽调整  |
+| ColResizableConfig | 配置 |
+
+### ColResizableConfig
+| 属性 | 类型 | 默认值| 说明 |
+| --- | --- | ---- | --- |
+| disabled | `(col:StkTableColumn) => boolean` | -- | 是否开启列宽调整 |

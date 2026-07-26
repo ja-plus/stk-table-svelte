@@ -58,6 +58,7 @@
         getClosestTr,
         getClosestTrIndex,
         howDeepTheHeader,
+        isEmptyValue,
         pureCellKeyGen,
         rafThrottle,
         tableSort,
@@ -75,6 +76,9 @@
 
     // ==================== Props ====================
     let {
+        // class/style passthrough (vue attribute fallthrough equivalent)
+        class: classNameProp = '',
+        style: styleProp = '',
         width = '',
         minWidth = '',
         maxWidth = '',
@@ -158,7 +162,6 @@
         empty,
         expand,
         customBottom,
-        children,
     } = $props();
 
     // ==================== Refs ====================
@@ -785,7 +788,6 @@
         virtualScroll.containerHeight = containerHeight;
         virtualScroll.pageSize = pageSize;
         virtualScroll.scrollHeight = scrollHeight || 0;
-        virtualScroll.rowHeight = rh;
         updateVirtualScrollY(scrollTop);
     }
 
@@ -831,6 +833,7 @@
                 const trElements = trRef;
                 for (let i = 0, len = trElements.length; i < len; i++) {
                     const tr = trElements[i];
+                    if (!tr) continue; // svelte keeps null holes in bind:this array when rows shrink
                     const rk = tr.dataset.rowKey;
                     if (!rk || autoRowHeightMap.has(rk)) continue;
                     autoRowHeightMap.set(rk, tr.offsetHeight);
@@ -1433,7 +1436,7 @@
         dataSourceCopy = tempData;
         onDataSourceChange();
         if (!data?.silent) {
-            ontogglerowexpand?.({ expanded: Boolean(expand), row, col: col || null });
+            ontogglerowexpand?.({ expanded: Boolean(expand), row, col });
         }
     }
 
@@ -1883,7 +1886,7 @@
 
     function colResizeOn(col: StkTableColumn<DT>): boolean {
         if (Object.prototype.toString.call(colResizable) === '[object Object]') {
-            return !(colResizable as ColResizableConfig<DT>).disabled?.(col);
+            return !(colResizable as ColResizableConfig<DT>).disabled(col);
         }
         return Boolean(colResizable);
     }
@@ -2031,11 +2034,11 @@
         if (dragStartKey !== th.dataset.colKey) {
             handleColOrderChange(dragStartKey, th.dataset.colKey);
         }
-        onthdrop?.(th.dataset.colKey || '');
+        onthdrop?.(th.dataset.colKey);
     }
 
     function handleColOrderChange(dragStartKey: string | undefined, dragEndKey: string | undefined) {
-        if (!dragStartKey || !dragEndKey) return;
+        if (isEmptyValue(dragStartKey) || isEmptyValue(dragEndKey)) return;
 
         if (headerDragConfig.mode !== 'none') {
             const columnsTemp: StkTableColumn<any>[] = columns.slice();
@@ -2550,7 +2553,6 @@
     }
 
     function triangleClick(e: MouseEvent, row: DT, col: StkTableColumn<DT>) {
-        e.stopPropagation();
         if (col.type === 'expand') {
             toggleExpandRow(row, col);
         } else if (col.type === 'tree-node') {
@@ -2822,9 +2824,14 @@
     }
 
     // ==================== Effects ====================
-    // watch columns
+    // watch columns (no immediate, same as vue watch)
+    let isFirstColumnsEffect = true;
     $effect(() => {
         columns; // track
+        if (isFirstColumnsEffect) {
+            isFirstColumnsEffect = false;
+            return;
+        }
         untrack(() => {
             handleDealColumns();
             updateMaxRowSpan();
@@ -2837,20 +2844,35 @@
     });
 
     // watch virtual
+    let isFirstVirtualEffect = true;
     $effect(() => {
         virtual; // track
+        if (isFirstVirtualEffect) {
+            isFirstVirtualEffect = false;
+            return;
+        }
         untrack(() => tick().then(() => initVirtualScrollY()));
     });
 
     // watch rowHeight
+    let isFirstRowHeightEffect = true;
     $effect(() => {
         rowHeight; // track
+        if (isFirstRowHeightEffect) {
+            isFirstRowHeightEffect = false;
+            return;
+        }
         untrack(() => initVirtualScrollY());
     });
 
     // watch virtualX
+    let isFirstVirtualXEffect = true;
     $effect(() => {
         virtualX; // track
+        if (isFirstVirtualXEffect) {
+            isFirstVirtualXEffect = false;
+            return;
+        }
         untrack(() => {
             handleDealColumns();
             tick().then(() => {
@@ -2861,15 +2883,58 @@
     });
 
     // watch dataSource
+    let isFirstDataSourceEffect = true;
     $effect(() => {
         dataSource; // track
+        if (isFirstDataSourceEffect) {
+            isFirstDataSourceEffect = false;
+            return;
+        }
         untrack(() => updateDataSource(dataSource as DT[]));
     });
 
     // watch fixedColShadow
+    let isFirstFixedColShadowEffect = true;
     $effect(() => {
         fixedColShadow; // track
+        if (isFirstFixedColShadowEffect) {
+            isFirstFixedColShadowEffect = false;
+            return;
+        }
         untrack(() => updateFixedShadow());
+    });
+
+    // watch onlyDragScroll (same as vue useScrollRowByRow watch)
+    let isFirstSRBREffect = true;
+    $effect(() => {
+        onlyDragScroll; // track
+        if (isFirstSRBREffect) {
+            isFirstSRBREffect = false;
+            return;
+        }
+        untrack(() => {
+            if (onlyDragScroll) {
+                addSRBREventListener();
+            } else {
+                removeSRBREventListener();
+            }
+        });
+    });
+
+    // watch virtual_on (same as vue useKeyboardArrowScroll watch)
+    let isFirstKbEffect = true;
+    $effect(() => {
+        virtual_on; // track
+        if (isFirstKbEffect) {
+            isFirstKbEffect = false;
+            return;
+        }
+        untrack(() => {
+            kbRemoveListeners();
+            if (virtual_on) {
+                kbAddEventListeners();
+            }
+        });
     });
 
 
@@ -2922,32 +2987,71 @@
         autoResizeObserved = false;
     }
 
-    // auto resize：随 virtual/virtualX 动态启停（对齐 Vue 版 useAutoResize 的 watch 行为）
-    $effect(() => {
-        const enabled = autoResize && (virtual || virtualX) && !!tableContainerRef;
-        untrack(() => {
-            if (enabled) initAutoResizeObserver();
-            else removeAutoResizeObserver();
+    // auto resize：仅初始 autoResize 为真时启用（对齐 Vue 版 setup 期 if (props.autoResize) useAutoResize 的非响应式判断），
+    // 并与 Vue 版 useAutoResize 一致：virtual/virtualX 各自独立 watch 启停
+    if (autoResize) {
+        let isFirstArVirtualEffect = true;
+        $effect(() => {
+            virtual; // track
+            if (isFirstArVirtualEffect) {
+                isFirstArVirtualEffect = false;
+                return;
+            }
+            untrack(() => {
+                if (virtual) initAutoResizeObserver();
+                else removeAutoResizeObserver();
+            });
         });
-    });
+        let isFirstArVirtualXEffect = true;
+        $effect(() => {
+            virtualX; // track
+            if (isFirstArVirtualXEffect) {
+                isFirstArVirtualXEffect = false;
+                return;
+            }
+            untrack(() => {
+                if (virtualX) initAutoResizeObserver();
+                else removeAutoResizeObserver();
+            });
+        });
+    }
+
+    function kbAddEventListeners() {
+        window.addEventListener('keydown', handleKeydown);
+        tableContainerRef?.addEventListener('mouseenter', kbHandleMouseEnter);
+        tableContainerRef?.addEventListener('mouseleave', kbHandleMouseLeave);
+        tableContainerRef?.addEventListener('mousedown', kbHandleMouseDown);
+    }
+
+    function kbRemoveListeners() {
+        window.removeEventListener('keydown', handleKeydown);
+        tableContainerRef?.removeEventListener('mouseenter', kbHandleMouseEnter);
+        tableContainerRef?.removeEventListener('mouseleave', kbHandleMouseLeave);
+        tableContainerRef?.removeEventListener('mousedown', kbHandleMouseDown);
+    }
 
     onMount(() => {
         initVirtualScroll();
         updateFixedShadow();
         dealDefaultSorter();
 
+        // wheel: 必须以非 passive 方式绑定，preventDefault 才能生效（对齐 Vue 模板 @wheel）
+        tableContainerRef?.addEventListener('wheel', onTableWheel, { passive: false });
+
         // col resize listeners
         window.addEventListener('mousemove', onThResizeMouseMove);
         window.addEventListener('mouseup', onThResizeMouseUp);
 
         // keyboard
-        window.addEventListener('keydown', handleKeydown);
-        tableContainerRef?.addEventListener('mouseenter', kbHandleMouseEnter);
-        tableContainerRef?.addEventListener('mouseleave', kbHandleMouseLeave);
-        tableContainerRef?.addEventListener('mousedown', kbHandleMouseDown);
+        kbAddEventListeners();
 
         // scroll row by row
         addSRBREventListener();
+
+        // auto resize
+        if (autoResize && (virtual || virtualX)) {
+            initAutoResizeObserver();
+        }
 
         // scrollbar
         if (typeof window !== 'undefined' && window.matchMedia) {
@@ -2961,12 +3065,10 @@
     });
 
     onDestroy(() => {
+        tableContainerRef?.removeEventListener('wheel', onTableWheel);
         window.removeEventListener('mousemove', onThResizeMouseMove);
         window.removeEventListener('mouseup', onThResizeMouseUp);
-        window.removeEventListener('keydown', handleKeydown);
-        tableContainerRef?.removeEventListener('mouseenter', kbHandleMouseEnter);
-        tableContainerRef?.removeEventListener('mouseleave', kbHandleMouseLeave);
-        tableContainerRef?.removeEventListener('mousedown', kbHandleMouseDown);
+        kbRemoveListeners();
         removeSRBREventListener();
         sbOnDragEnd();
         sbResizeObserver?.disconnect();
@@ -3007,7 +3109,7 @@
 <!-- Template -->
 <div
     bind:this={tableContainerRef}
-    class="stk-table"
+    class="stk-table {classNameProp}"
     class:virtual
     class:virtual-x={virtualX}
     class:vt-on={virtual_on}
@@ -3016,7 +3118,7 @@
     class:headless
     class:is-col-resizing={isColResizing}
     class:col-resizable={colResizable}
-    class:bordered={bordered === true}
+    class:bordered={Boolean(bordered)}
     class:bordered-h={bordered === 'h'}
     class:bordered-v={bordered === 'v'}
     class:bordered-body-v={bordered === 'body-v'}
@@ -3036,9 +3138,8 @@
     class:is-area-selecting={areaSelectionFeature.isSelecting}
     class:exp-scroll-y={isExperimentalScrollY}
     tabindex={areaSelectionFeature.config.enabled ? 0 : undefined}
-    style="--row-height:{autoRowHeight ? '' : virtualScroll.rowHeight + 'px'};--header-row-height:{headerRowHeight}px;--footer-row-height:{footerRowHeight}px;--highlight-duration:{(highlightConfig as HighlightConfig).duration ? (highlightConfig as HighlightConfig).duration + 's' : ''};--highlight-timing-function:{highlightSteps ? `steps(${highlightSteps})` : ''};--sb-width:{scrollbarOptions.width}px;--sb-height:{scrollbarOptions.height}px;"
+    style="{autoRowHeight ? '' : `--row-height:${virtualScroll.rowHeight}px;`}--header-row-height:{headerRowHeight}px;--footer-row-height:{footerRowHeight}px;{(highlightConfig as HighlightConfig).duration ? `--highlight-duration:${(highlightConfig as HighlightConfig).duration}s;` : ''}{highlightSteps ? `--highlight-timing-function:steps(${highlightSteps});` : ''}--sb-width:{scrollbarOptions.width}px;--sb-height:{scrollbarOptions.height}px;{styleProp}"
     onscroll={onTableScroll}
-    onwheel={onTableWheel}
 >
     {#if !isExperimentalScrollY && SRBRTotalHeight}
         <div class="row-by-row-table-height" style="height: {SRBRTotalHeight}px"></div>
@@ -3126,13 +3227,12 @@
                                     <td data-col-key={tfProps['data-col-key']} style={tfProps.style} class={tfProps.class}>
                                         {#if col.customFooterCell}
                                             <svelte:component this={col.customFooterCell} class="table-cell-wrapper" tabindex="-1" col={col} row={footRow} rowIndex={footRowIndex} cellValue={footRow[col.dataIndex]} />
-                                        {:else}
-                                            <div class="table-cell-wrapper" tabindex="-1" title={footRow[col.dataIndex] || ''}>
-                                                {#if footRow[col.dataIndex] != null}
-                                                    <span>{footRow[col.dataIndex]}</span>
-                                                {/if}
-                                            </div>
                                         {/if}
+                                        <div class="table-cell-wrapper" tabindex="-1" title={footRow[col.dataIndex] || ''}>
+                                            {#if footRow[col.dataIndex] != null}
+                                                <span>{footRow[col.dataIndex]}</span>
+                                            {/if}
+                                        </div>
                                     </td>
                                 {/if}
                             {/each}
@@ -3234,17 +3334,16 @@
                                         {:else if col.type === 'tree-node'}
                                             <TreeNodeCell
                                                 class="table-cell-wrapper"
-                                                tabindex="-1"
+                                                tabindex={-1}
                                                 col={col}
                                                 {row}
-                                                onclick={(e) => triangleClick(e, row, col)}
                                             />
                                         {:else}
                                             <div class="table-cell-wrapper" tabindex="-1" title={row[col.dataIndex] || ''}>
                                                 {#if col.type === 'dragRow'}
                                                     <DragHandle ondragstart={(e) => onTrDragStart(e, getAbsoluteRowIndex(rowIndex))} />
                                                 {:else if col.type === 'expand'}
-                                                    <TriangleIcon onclick={(e) => triangleClick(e, row, col)} />
+                                                    <TriangleIcon />
                                                 {/if}
                                                 {#if row[col.dataIndex] != null}<span>{row[col.dataIndex]}</span>{/if}
                                             </div>
@@ -3296,9 +3395,6 @@
             onmousedown={onHorizontalScrollbarMouseDown}
             ontouchstart={onHorizontalScrollbarMouseDown}
         ></div>
-    {/if}
-    {#if children}
-        {@render children()}
     {/if}
 </div>
 

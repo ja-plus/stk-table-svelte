@@ -1,0 +1,73 @@
+<script lang="ts">
+    import StkTable from '../../StkTable.svelte';
+    import CheckItem from '../../components/CheckItem.svelte';
+    import type { StkTableColumn } from '../../../src/StkTable/index';
+    import { useI18n } from '../../hooks/useI18n/index';
+
+    const { t } = useI18n();
+    let virtual = $state(true);
+    const columns: StkTableColumn<any>[] = [
+        {
+            dataIndex: 'Basic',
+            title: t('basic'),
+            children: [
+                { dataIndex: 'id', title: t('id'), width: 100 },
+                {
+                    dataIndex: 'lv2',
+                    title: t('lv2'),
+                    width: 100,
+                    children: [
+                        { dataIndex: 'lv2_1', title: t('lv2_1'), width: 100 },
+                        { dataIndex: 'lv2_2', title: t('lv2_2'), width: 100 },
+                    ],
+                },
+            ],
+        },
+        {
+            dataIndex: 'age',
+            title: t('age'),
+            width: '50px',
+            children: [
+                { dataIndex: 'id3', title: t('id'), width: 50 },
+                {
+                    dataIndex: 'lv5',
+                    title: t('lv2'),
+                    width: 100,
+                },
+            ],
+        },
+        { dataIndex: 'email', title: t('email'), width: '130px' },
+        {
+            dataIndex: 'other',
+            title: t('other'),
+            children: new Array(4).fill(0).map((it, i) => {
+                return {
+                    dataIndex: 'other' + i,
+                    title: t('other') + ' ' + i,
+                    width: 100,
+                };
+            }),
+        },
+        {
+            dataIndex: 'right',
+            title: t('right'),
+            children: [
+                { dataIndex: 'right-1', title: t('right1'), width: 50 },
+                { dataIndex: 'right-2', title: t('right2'), width: 100 },
+            ],
+        },
+    ];
+    const dataSource = new Array(50).fill(0).map((it, i) => {
+        return {
+            id: i,
+            lv2_1: 'lv2.1',
+            lv2_2: 'lv2.2',
+            age: i,
+            email: i + '@email.com',
+        };
+    });
+</script>
+
+<CheckItem bind:checked={virtual} text="virtual"></CheckItem>
+<StkTable style="height: 200px" rowKey="id" fixedColShadow {virtual} {columns} {dataSource}>
+</StkTable>

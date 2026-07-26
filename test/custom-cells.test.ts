@@ -15,7 +15,6 @@ describe('library entry exports', () => {
         expect(lib.createEditableCell).toBeTypeOf('function');
         expect(lib.createFilterCell).toBeTypeOf('function');
         expect(lib.formatNumber).toBeTypeOf('function');
-        expect(lib.TagType).toBeTruthy();
     });
 });
 

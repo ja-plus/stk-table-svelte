@@ -1,4 +1,5 @@
-import { useAreaSelection, useAreaSelectionName, type UseAreaSelectionDeps } from './features/index';
+import { useAreaSelection, useAreaSelectionName } from './features/index';
+import type { UseAreaSelectionDeps } from './features/useAreaSelection.svelte';
 import { MY_FN_NAME } from './features/const';
 
 type OnDemandFeature = {

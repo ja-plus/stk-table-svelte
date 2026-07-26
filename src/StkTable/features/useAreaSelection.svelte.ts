@@ -813,7 +813,6 @@ export function useAreaSelection<DT extends Record<string, any>>(deps: UseAreaSe
         const x = Math.max(left + POINT_EDGE_OFFSET, Math.min(lastMouseClientX, right - POINT_EDGE_OFFSET));
         const y = Math.max(headerBottom + POINT_EDGE_OFFSET, Math.min(lastMouseClientY, bottom - POINT_EDGE_OFFSET));
 
-        if (typeof document.elementFromPoint !== 'function') return;
         const el = document.elementFromPoint(x, y);
         if (!el) return;
 
@@ -906,11 +905,9 @@ export function useAreaSelection<DT extends Record<string, any>>(deps: UseAreaSe
         }
         const text = lines.join('\n');
 
-        if (navigator.clipboard?.writeText) {
-            navigator.clipboard.writeText(text).catch(() => {
-                console.warn('Failed to copy to clipboard');
-            });
-        }
+        navigator.clipboard.writeText(text).catch(() => {
+            console.warn('Failed to copy to clipboard');
+        });
 
         return text;
     }

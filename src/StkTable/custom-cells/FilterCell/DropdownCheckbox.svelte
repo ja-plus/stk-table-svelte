@@ -3,4 +3,4 @@
     let checked = $derived(__set?.has(row?.value) ?? false);
 </script>
 
-<input type="checkbox" checked={checked} tabindex="-1" />
+<input type="checkbox" checked={checked} />

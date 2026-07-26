@@ -1,0 +1,47 @@
+:root {
+    /* VitePress 品牌色覆盖为 Svelte 橙色 */
+    --vp-c-brand-1: #ff3e00;
+    --vp-c-brand-2: #e63800;
+    --vp-c-brand-3: #cc3200;
+    --vp-c-brand-soft: rgba(255, 62, 0, 0.14);
+
+    --vp-home-hero-name-color: transparent;
+    --vp-home-hero-name-background: -webkit-linear-gradient(120deg, #ff3e00, #ff6b3d);
+    --vp-home-hero-image-background-image: -webkit-linear-gradient(120deg, rgba(255, 62, 0, 0.5) 50%, rgba(255, 107, 61, 0.5) 50%);
+    --vp-home-hero-image-filter: blur(72px);
+}
+
+.dark {
+    --vp-c-brand-1: #ff3e00;
+    --vp-c-brand-2: #ff5722;
+    --vp-c-brand-3: #e63800;
+    --vp-c-brand-soft: rgba(255, 62, 0, 0.16);
+}
+
+
+/* demo 中的表格高度撑满外层容器，保证虚拟滚动生效 */
+.vitepress-demo-plugin-preview .stk-table {
+    height: 100%;
+}
+
+/*
+ * 隔离 demo 与 .vp-doc 的 markdown 表格样式：
+ * VitePress 2.x 不再自动为 vp-doc 样式加 :not(:where(.vp-raw, .vp-raw *)) 隔离，
+ * 导致 .vp-doc table 的 display:block / margin / overflow-x 泄漏进 demo 的 <table>。
+ * 这里仅重置 demo 容器内的 <table>（选择器限定在 .vitepress-demo-plugin-preview 内，
+ * 不会命中 md 中的表格，故不影响 md 表格样式）。
+ * th/td/tr 无需重置：StkTable 自身样式优先级更高，已正确覆盖。
+ */
+.vitepress-demo-plugin-preview table {
+    display: table;
+    margin: 0;
+    overflow-x: visible;
+}
+.vitepress-demo-plugin-preview table th,
+.vitepress-demo-plugin-preview table td {
+    border: 0;
+}
+.vitepress-demo-plugin-preview table tr{
+    border-top: none;
+    transition: none;
+}
