@@ -1,4 +1,4 @@
-# NumberCell <Badge type="tip" text="^1.0.1" />
+# NumberCell
 
 NumberCell is a built-in display-only cell that formats numeric values into readable text. It supports decimal places, thousands separators, prefix/suffix, sign display, percentages, unit abbreviation (万/亿, K/M/B) and empty-value placeholders. It is commonly used for market quotes, monetary amounts and statistical data.
 

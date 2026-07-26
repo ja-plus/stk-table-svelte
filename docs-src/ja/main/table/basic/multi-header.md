@@ -25,7 +25,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo svelte="basic/multi-header/MultiHeader.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/multi-header/MultiHeader.svelte"></demo>
 
-## 横方向仮想リスト(✨NEW)<Badge type="tip" text="^1.0.0" />
+## 横方向仮想リスト
 AIの支援により、マルチレベルヘッダーがついに横方向仮想リストをサポートしました！
 
 `props.virtualX` を設定するだけです。

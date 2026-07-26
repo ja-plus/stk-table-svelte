@@ -1,4 +1,4 @@
-# CheckboxCell <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
+# CheckboxCell <Badge type="warning" text="Beta" />
 
 CheckboxCell is a built-in checkbox cell component that supports select-all and indeterminate states at the cell level.
 
@@ -7,12 +7,6 @@ CheckboxCell is a built-in checkbox cell component that supports select-all and 
 Create `CheckboxCell` and `CheckboxAllCell` components via the `createCheckboxCell` factory function, and use them as `customCell` and `customHeaderCell` respectively.
 
 <demo svelte="advanced/custom-cells/CheckboxCell/index.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.svelte"></demo>
-
-### Using Third-party Components
-
-You can pass a UI library's Checkbox component via `checkboxComponent` to maintain consistent styling.
-
-<demo svelte="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte"></demo>
 
 ### createCheckboxCell Options
 

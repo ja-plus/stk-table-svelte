@@ -26,7 +26,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo svelte="basic/multi-header/MultiHeader.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/multi-header/MultiHeader.svelte"></demo>
 
-## 가로 방향 가상 리스트(✨NEW)<Badge type="tip" text="^1.0.0" />
+## 가로 방향 가상 리스트
 AI의 도움으로 멀티 레벨 헤더가 마침내 가로 방향 가상 리스트를 지원하게 되었습니다!
 
 `props.virtualX`를 설정하면 됩니다.

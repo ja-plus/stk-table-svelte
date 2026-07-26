@@ -1,4 +1,4 @@
-# ChangeCell <Badge type="tip" text="^1.0.1" />
+# ChangeCell
 
 On top of NumberCell's formatting, ChangeCell adds rise/fall coloring and arrows: it colors the value as rise / fall / flat based on its sign, can switch between A-share coloring (rise red, fall green) and international coloring (rise green, fall red), and can show ▲/▼ arrows. The coloring adapts automatically to the table's light/dark theme.
 

@@ -80,7 +80,7 @@ export const enConfig = defineConfig({
                                     { text: 'Custom Cell', link: '/table/advanced/custom-cell' },
                                     { text: 'Custom Sorting', link: '/table/advanced/custom-sort' },
                                     {
-                                        text: 'Built-in Custom Cell Extensions (✨NEW)',
+                                        text: 'Built-in Custom Cell Extensions ',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell', link: '/table/advanced/custom-cells/editable-cell' },
@@ -129,7 +129,7 @@ export const enConfig = defineConfig({
                     { text: 'Cell Edit', link: '/cell-edit' },
                     { text: 'Panel Tree', link: '/panel-tree' },
                     { text: 'Lazy Load', link: '/lazy-load' },
-                    { text: 'Realtime Merge Cells(✨NEW)', link: '/realtime-merge-cells' },
+                    { text: 'Realtime Merge Cells', link: '/realtime-merge-cells' },
                 ],
             },
         },

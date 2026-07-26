@@ -25,7 +25,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo svelte="basic/multi-header/MultiHeader.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/multi-header/MultiHeader.svelte"></demo>
 
-## Horizontal Virtual List(✨NEW)<Badge type="tip" text="^1.0.0" />
+## Horizontal Virtual List
 With the help of AI, multi-level headers finally support horizontal virtual list!
 
 Configure `props.virtualX` to enable it.

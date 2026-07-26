@@ -88,7 +88,7 @@ stkTableRef?.setHighlightDimRow(['id1'], {
 ```
 <demo svelte="advanced/highlight/HighlightCss.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/highlight/HighlightCss.svelte"></demo>
 
-## ~~js를 통해 커스텀 강조 애니메이션 정의~~ (`v0.7.0`已废弃)
+## ~~js를 통해 커스텀 강조 애니메이션 정의~~ (已废弃)
 <details>
 <summary>
     클릭하여 보기
@@ -142,7 +142,6 @@ type HighlightDimBaseOption = {
      * - setHighlightDimRow 호출 시 해당 DOM을 가져올 수 없으면 직접 폐기되어 store의 루프 계산에 들어가지 않습니다;
      * - store에 해당 key가 이미 존재하는 경우에도 삭제됩니다.
      * - 루프 계산 중에 어떤 행의 DOM이 더 이상 존재하지 않으면 store에서 삭제되어 더 이상 계산되지 않습니다.
-     * @version ^1.0.0
      */
     ignoreInvisible?: boolean;
 };

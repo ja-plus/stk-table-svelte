@@ -83,7 +83,6 @@
     bind:this={stkTableRef}
     rowKey="id"
     style="height: 200px"
-    maxWidth="max-content"
     sortRemote
     {columns}
     {dataSource}

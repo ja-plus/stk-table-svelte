@@ -1,4 +1,4 @@
-# CheckboxCell 多选框 <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
+# CheckboxCell 多选框 <Badge type="warning" text="Beta" />
 
 CheckboxCell 是一个内置的多选框单元格组件，支持单元格级别的全选/半选功能。
 
@@ -7,12 +7,6 @@ CheckboxCell 是一个内置的多选框单元格组件，支持单元格级别�
 通过 `createCheckboxCell` 工厂函数创建 `CheckboxCell` 和 `CheckboxAllCell` 组件，分别用于 `customCell` 和 `customHeaderCell`。
 
 <demo svelte="advanced/custom-cells/CheckboxCell/index.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.svelte"></demo>
-
-### 使用第三方组件
-
-可以通过 `checkboxComponent` 传入 UI 库的 Checkbox 组件，以保持项目整体样式统一。
-
-<demo svelte="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte"></demo>
 
 ### createCheckboxCell 选项
 

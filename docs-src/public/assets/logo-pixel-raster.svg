@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="240" viewBox="0 0 120 120"><title>svelte-logo-raster-5x5</title>
+  <!-- row 0 -->
+  <rect x="50" y="2" width="20" height="20" rx="5" fill="rgb(255,102,54)" fill-opacity="0.596"/>
+  <rect x="74" y="2" width="20" height="20" rx="5" fill="rgb(255,62,0)" fill-opacity="0.502"/>
+  <!-- row 1 -->
+  <rect x="26" y="26" width="20" height="20" rx="5" fill="rgb(255,159,128)"/>
+  <rect x="50" y="26" width="20" height="20" rx="5" fill="rgb(255,247,245)"/>
+  <rect x="74" y="26" width="20" height="20" rx="5" fill="rgb(255,235,229)"/>
+  <rect x="98" y="26" width="20" height="20" rx="5" fill="rgb(255,64,0)" fill-opacity="0.188"/>
+  <!-- row 2 -->
+  <rect x="2" y="50" width="20" height="20" rx="5" fill="rgb(255,60,0)" fill-opacity="0.251"/>
+  <rect x="26" y="50" width="20" height="20" rx="5" fill="rgb(255,159,128)"/>
+  <rect x="50" y="50" width="20" height="20" rx="5" fill="rgb(255,255,255)"/>
+  <rect x="74" y="50" width="20" height="20" rx="5" fill="rgb(255,159,128)"/>
+  <rect x="98" y="50" width="20" height="20" rx="5" fill="rgb(255,60,0)" fill-opacity="0.251"/>
+  <!-- row 3 -->
+  <rect x="2" y="74" width="20" height="20" rx="5" fill="rgb(255,61,0)" fill-opacity="0.165"/>
+  <rect x="26" y="74" width="20" height="20" rx="5" fill="rgb(255,206,190)"/>
+  <rect x="50" y="74" width="20" height="20" rx="5" fill="rgb(255,255,255)"/>
+  <rect x="74" y="74" width="20" height="20" rx="5" fill="rgb(255,159,128)"/>
+  <!-- row 4 -->
+  <rect x="26" y="98" width="20" height="20" rx="5" fill="rgb(255,62,0)" fill-opacity="0.502"/>
+  <rect x="50" y="98" width="20" height="20" rx="5" fill="rgb(255,98,49)" fill-opacity="0.651"/>
+</svg>

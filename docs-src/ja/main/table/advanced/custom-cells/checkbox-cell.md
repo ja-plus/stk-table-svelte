@@ -1,4 +1,4 @@
-# CheckboxCell チェックボックス <Badge type="tip" text="^1.0.0" /> <Badge type="warning" text="Beta" />
+# CheckboxCell チェックボックス <Badge type="warning" text="Beta" />
 
 CheckboxCell は、セルレベルで全選択/半選択機能をサポートする組み込みのチェックボックスセルコンポーネントです。
 
@@ -7,12 +7,6 @@ CheckboxCell は、セルレベルで全選択/半選択機能をサポートす
 `createCheckboxCell` ファクトリ関数を使用して `CheckboxCell` と `CheckboxAllCell` コンポーネントを作成し、それぞれ `customCell` と `customHeaderCell` として使用します。
 
 <demo svelte="advanced/custom-cells/CheckboxCell/index.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/index.svelte"></demo>
-
-### サードパーティコンポーネントの使用
-
-`checkboxComponent` にUIライブラリの Checkbox コンポーネントを渡して、プロジェクト全体のスタイルを統一することができます。
-
-<demo svelte="advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/advanced/custom-cells/CheckboxCell/CheckboxComponentCell.svelte"></demo>
 
 ### createCheckboxCell オプション
 

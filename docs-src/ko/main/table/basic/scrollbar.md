@@ -21,7 +21,7 @@
 
 `Blink` 또는 `webkit` 엔진 브라우저 (Chrome, Safari, Opera) 에서만 유효합니다 ([::-webkit-scrollbar | MDN](https://developer.mozilla.org/zh-CN/docs/Web/CSS/::-webkit-scrollbar) 참조).
 
-## 내장 스크롤바 (`^0.9.0`)
+## 내장 스크롤바
 
 DOM 기반의 내장 스크롤바는 `props.scrollbar` 를 통해 활성화할 수 있습니다.
 
@@ -39,7 +39,7 @@ DOM 기반의 내장 스크롤바는 `props.scrollbar` 를 통해 활성화할 �
 ```
 ::: tip 주의
 * 가상 목록 (virtual) 에서만 유효합니다.
-* 모바일 기기에서는 작동하지 않습니다. (`^0.11.13`)
+* 모바일 기기에서는 작동하지 않습니다.
 :::
 
 <demo svelte="basic/scrollbar-style/CustomScrollbar.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.svelte"></demo>

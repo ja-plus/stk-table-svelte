@@ -1,7 +1,21 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
     import type { StkTableColumn } from '../../../src/StkTable/index';
+    import ContextMenu from 'ja-contextmenu';
+    import type { MenuOption } from 'ja-contextmenu/lib/types/MenuOption';
     import StkTable from '../../StkTable.svelte';
+
+    import 'ja-contextmenu/styles/dark.css';
+
+    // vue 版通过 vitepress useData().isDark 获取暗色主题，svelte 版监听 html class
+    let isDark = $state(false);
+    $effect(() => {
+        const html = document.documentElement;
+        const update = () => (isDark = html.classList.contains('dark'));
+        update();
+        const observer = new MutationObserver(update);
+        observer.observe(html, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
+    });
 
     type Data = {
         id: number;
@@ -27,63 +41,35 @@
         { id: 5, name: 'Qian Qi', age: 26, department: 'Technical Department' },
     ]);
 
-    // 本地最小上下文菜单实现（等价替代 ja-contextmenu，暗色主题由 vitepress CSS 变量自动跟随）
-    let menuVisible = $state(false);
-    let menuX = $state(0);
-    let menuY = $state(0);
-    let menuPayload = $state<Data | null>(null);
+    const contextMenu = new ContextMenu({
+        theme: () => (isDark ? 'dark' : ('' as any)),
+    });
 
-    type MenuItem = {
-        label: string | ((payload: Data) => string);
-        onclick: (e: Event, payload: Data) => void;
+    const menuOption: MenuOption<Data> = {
+        items: [
+            {
+                label: 'View Details',
+                onclick: (e: Event, payload: Data) => {
+                    alert(`View details of ${payload.name}`);
+                },
+            },
+            {
+                label: (payload: Data) => `Delete ${payload.name}`,
+                onclick: (e: Event, payload: Data) => {
+                    if (confirm(`Are you sure to delete the record of ${payload.name}?`)) {
+                        dataSource = dataSource.filter(item => item.id !== payload.id);
+                    }
+                },
+            },
+        ],
     };
-    const menuItems: MenuItem[] = [
-        {
-            label: 'View Details',
-            onclick: (e: Event, payload: Data) => {
-                alert(`View details of ${payload.name}`);
-            },
-        },
-        {
-            label: (payload: Data) => `Delete ${payload.name}`,
-            onclick: (e: Event, payload: Data) => {
-                if (confirm(`Are you sure to delete the record of ${payload.name}?`)) {
-                    dataSource = dataSource.filter(item => item.id !== payload.id);
-                }
-            },
-        },
-    ];
 
-    function showMenu(event: MouseEvent, payload: Data) {
-        event.preventDefault();
-        menuPayload = payload;
-        menuX = event.clientX;
-        menuY = event.clientY;
-        menuVisible = true;
-    }
-
-    function hideMenu() {
-        menuVisible = false;
-    }
-
-    function onMenuItemClick(e: Event, item: MenuItem) {
-        if (menuPayload) item.onclick(e, menuPayload);
-        hideMenu();
-    }
+    const menu = contextMenu.create(menuOption);
 
     function onRowMenu(event: MouseEvent, row: Data) {
         stkTableRef?.setCurrentRow(row);
-        showMenu(event, row);
+        menu.show(event, row);
     }
-
-    onMount(() => {
-        window.addEventListener('click', hideMenu);
-        window.addEventListener('scroll', hideMenu, true);
-        return () => {
-            window.removeEventListener('click', hideMenu);
-            window.removeEventListener('scroll', hideMenu, true);
-        };
-    });
 </script>
 
 <StkTable
@@ -94,47 +80,3 @@
     {dataSource}
     onrowmenu={onRowMenu}
 ></StkTable>
-
-{#if menuVisible && menuPayload}
-    <ul class="demo-contextmenu" style="left: {menuX}px; top: {menuY}px">
-        {#each menuItems as item}
-            <li class="demo-contextmenu__item">
-                <button type="button" onclick={e => onMenuItemClick(e, item)}>
-                    {typeof item.label === 'function' ? item.label(menuPayload) : item.label}
-                </button>
-            </li>
-        {/each}
-    </ul>
-{/if}
-
-<style>
-    .demo-contextmenu {
-        position: fixed;
-        z-index: 1000;
-        margin: 0;
-        padding: 4px 0;
-        list-style: none;
-        min-width: 140px;
-        background-color: var(--vp-c-bg-elv, #fff);
-        color: var(--vp-c-text-1, #333);
-        border: 1px solid var(--vp-c-divider, #e5e5e5);
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    }
-
-    .demo-contextmenu__item button {
-        display: block;
-        width: 100%;
-        padding: 6px 16px;
-        text-align: left;
-        background: none;
-        border: none;
-        color: inherit;
-        font-size: 14px;
-        cursor: pointer;
-    }
-
-    .demo-contextmenu__item button:hover {
-        background-color: var(--vp-c-default-soft, #f0f9ff);
-    }
-</style>

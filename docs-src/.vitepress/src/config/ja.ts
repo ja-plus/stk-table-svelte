@@ -80,7 +80,7 @@ export const jaConfig = defineConfig({
                                     { text: 'カスタムセル', link: '/table/advanced/custom-cell' },
                                     { text: 'カスタムソート', link: '/table/advanced/custom-sort' },
                                     {
-                                        text: 'カスタムセル組み込み拡張(✨NEW)',
+                                        text: 'カスタムセル組み込み拡張',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 編集可能セル', link: '/table/advanced/custom-cells/editable-cell' },
@@ -129,7 +129,7 @@ export const jaConfig = defineConfig({
                     { text: 'セル編集', link: '/cell-edit' },
                     { text: 'パネルツリー', link: '/panel-tree' },
                     { text: '遅延ロード', link: '/lazy-load' },
-                    { text: 'リアルタイムセル結合(✨NEW)', link: '/realtime-merge-cells' },
+                    { text: 'リアルタイムセル結合', link: '/realtime-merge-cells' },
                 ],
             },
         },

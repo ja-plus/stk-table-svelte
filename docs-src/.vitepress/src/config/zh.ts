@@ -104,7 +104,7 @@ export const zhConfig = defineConfig({
                                     { text: '自定义单元格', link: '/table/advanced/custom-cell' },
                                     { text: '自定义排序', link: '/table/advanced/custom-sort' },
                                     {
-                                        text: '自定义单元格内置扩展(✨NEW)',
+                                        text: '自定义单元格内置扩展',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 可编辑单元格', link: '/table/advanced/custom-cells/editable-cell' },
@@ -153,7 +153,7 @@ export const zhConfig = defineConfig({
                     { text: '单元格编辑', link: '/cell-edit' },
                     { text: '面板树', link: '/panel-tree' },
                     { text: '懒加载', link: '/lazy-load' },
-                    { text: '实时合并单元格(✨NEW)', link: '/realtime-merge-cells' },
+                    { text: '实时合并单元格', link: '/realtime-merge-cells' },
                 ],
             },
         },

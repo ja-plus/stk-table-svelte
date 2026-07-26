@@ -25,7 +25,7 @@ const columns: StkTableColumn<any>[] = [
 
 <demo svelte="basic/multi-header/MultiHeader.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/multi-header/MultiHeader.svelte"></demo>
 
-## 横向虚拟列表(✨NEW)<Badge type="tip" text="^1.0.0" />
+## 横向虚拟列表
 经过AI的辅助，多级表头终于支持横向虚拟列表啦！
 
 配置 `props.virtualX` 即可。

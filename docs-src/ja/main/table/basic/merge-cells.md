@@ -1,4 +1,4 @@
-# セルマージ <Badge type="tip" text="^0.8.0" /> 
+# セルマージ
 
 `StkTableColumns['mergeCells']` 関数を通じてマージするセルを指定します。
 
@@ -28,7 +28,7 @@ function mergeCells(data: {
 テーブルデータが変更されると、`mergeCells` 関数が再度呼び出されて再計算されます。
 :::
 
-### 仮想リストでの行マージ <Badge type="tip" text="^0.8.4" /> 
+### 仮想リストでの行マージ
 #### シンプルマージ
 <demo svelte="basic/merge-cells/MergeCellsRowVirtual/index.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/merge-cells/MergeCellsRowVirtual/index.svelte"></demo>
 コードでは、行の `rowspan` フィールドをマージ数として使用するように `mergeCells` 関数が定義されています。

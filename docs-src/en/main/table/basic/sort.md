@@ -67,7 +67,7 @@ After configuring `props.sortConfig.sortChildren = true`, when clicking on the t
 
 <demo svelte="basic/sort/SortChildren.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/sort/SortChildren.svelte"></demo>
 
-## Multi-column Sorting <Badge type="tip" text="^0.11.2" />
+## Multi-column Sorting
 
 Configure `props.sortConfig.multiSort = true` to enable multi-column sorting mode.
 

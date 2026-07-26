@@ -80,7 +80,7 @@ export const koConfig = defineConfig({
                                     { text: '커스텀 셀', link: '/table/advanced/custom-cell' },
                                     { text: '커스텀 정렬', link: '/table/advanced/custom-sort' },
                                     {
-                                        text: '커스텀 셀 내장 확장(✨NEW)',
+                                        text: '커스텀 셀 내장 확장',
                                         collapsed: true,
                                         items: [
                                             { text: 'EditableCell 편집 가능 셀', link: '/table/advanced/custom-cells/editable-cell' },
@@ -129,7 +129,7 @@ export const koConfig = defineConfig({
                     { text: '셀 편집', link: '/cell-edit' },
                     { text: '패널 트리', link: '/panel-tree' },
                     { text: '지연 로딩', link: '/lazy-load' },
-                    { text: '실시간 셀 병합(✨NEW)', link: '/realtime-merge-cells' },
+                    { text: '실시간 셀 병합', link: '/realtime-merge-cells' },
                 ],
             },
         },

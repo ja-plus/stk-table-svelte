@@ -20,7 +20,7 @@
 
 `Blink` または `webkit` エンジンを使用するブラウザ（Chrome、Safari、Opera）で効果的です（[::-webkit-scrollbar | MDN](https://developer.mozilla.org/en-US/docs/Web/CSS/::-webkit-scrollbar) を参照）。
 
-## 組み込みスクロールバー（`^0.9.0`）
+## 組み込みスクロールバー
 
 DOM実装の組み込みスクロールバー、`props.scrollbar` を介して有効にします。
 
@@ -38,7 +38,7 @@ DOM実装の組み込みスクロールバー、`props.scrollbar` を介して�
 ```
 ::: tip 注意
 * 仮想スクロール（`virtual`）を使用している場合にのみ効果的です。
-* モバイル端末では効果ありません。(`^0.11.13`)
+* モバイル端末では効果ありません。
 :::
 
 <demo svelte="basic/scrollbar-style/CustomScrollbar.svelte" github="https://github.com/ja-plus/stk-table-svelte/tree/master/docs-demo/basic/scrollbar-style/CustomScrollbar.svelte"></demo>
