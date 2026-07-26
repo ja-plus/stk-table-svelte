@@ -48,6 +48,8 @@ export default defineConfig({
         },
     },
     vite: {
-        plugins: [svelte()],
+        // vitepress 将 vite root 设为 docs-src，需显式指定项目根目录的 svelte.config.js，
+        // 否则 vitePreprocess 不会生效，<style lang="less"> 将无法编译
+        plugins: [svelte({ configFile: path.resolve(__dirname, '../../svelte.config.js') })],
     },
 });
