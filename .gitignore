@@ -1,7 +1,5 @@
 node_modules
 dist
-# 内置 vitepress-demo-plugin 的构建产物需要提交，供 CI 环境直接安装
-!packages/vitepress-demo-plugin/dist
 *.log
 .DS_Store
 .idea

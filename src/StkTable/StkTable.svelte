@@ -5,7 +5,6 @@
 -->
 <script lang="ts">
     import { onMount, onDestroy, tick, untrack, setContext } from 'svelte';
-    import type { Snippet } from 'svelte';
     import DragHandle from './components/DragHandle.svelte';
     import SortIcon from './components/SortIcon.svelte';
     import TreeNodeCell from './components/TreeNodeCell.svelte';
@@ -171,7 +170,7 @@
 
     // ==================== Core State ====================
     /** whether to use relative fixed mode */
-    let isRelativeMode = $state(IS_LEGACY_MODE ? true : cellFixedMode === 'relative');
+    let isRelativeMode = $state(IS_LEGACY_MODE ? true : untrack(() => cellFixedMode) === 'relative');
 
     /** footer position top */
     let isFooterTop = $derived(footerConfig?.position === 'top');
@@ -433,7 +432,7 @@
     // ==================== Virtual Scroll Y ====================
     let virtualScroll = $state({
         containerHeight: 0,
-        rowHeight: rowHeight,
+        rowHeight: untrack(() => rowHeight),
         pageSize: 0,
         startIndex: 0,
         endIndex: 0,
@@ -1250,7 +1249,7 @@
     }
 
     // ==================== Tree ====================
-    const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = treeConfig as TreeConfig;
+    const { defaultExpandAll, defaultExpandKeys, defaultExpandLevel }: TreeConfig = untrack(() => treeConfig as TreeConfig);
     let isTreeFirstLoad = true;
 
     function toggleTreeNode(row: DT, col: any) {
@@ -2989,7 +2988,7 @@
 
     // auto resize：仅初始 autoResize 为真时启用（对齐 Vue 版 setup 期 if (props.autoResize) useAutoResize 的非响应式判断），
     // 并与 Vue 版 useAutoResize 一致：virtual/virtualX 各自独立 watch 启停
-    if (autoResize) {
+    if (untrack(() => autoResize)) {
         let isFirstArVirtualEffect = true;
         $effect(() => {
             virtual; // track
@@ -3107,6 +3106,7 @@
 </script>
 
 <!-- Template -->
+<!-- svelte-ignore a11y_no_noninteractive_tabindex -->
 <div
     bind:this={tableContainerRef}
     class="stk-table {classNameProp}"

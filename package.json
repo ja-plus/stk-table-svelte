@@ -13,7 +13,7 @@
         "test": "vitest",
         "check": "svelte-check --tsconfig ./tsconfig.json",
         "docs:dev": "vitepress dev docs-src",
-        "docs:build": "vitepress build docs-src",
+        "docs:build": "node scripts/docs-build.mjs docs-src",
         "docs:preview": "vitepress preview docs-src"
     },
     "keywords": [
@@ -40,6 +40,7 @@
         "@testing-library/user-event": "^14.6.1",
         "@tsconfig/svelte": "^5.0.8",
         "@types/mockjs": "^1.0.10",
+        "@types/node": "^26.1.1",
         "ja-contextmenu": "^1.11.0",
         "jsdom": "^25.0.0",
         "less": "^4.2.0",
