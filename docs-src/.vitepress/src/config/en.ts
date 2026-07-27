@@ -18,7 +18,13 @@ export const enConfig = defineConfig({
             { text: 'Home', link: '/en/' },
             { text: 'Documentation', link: '/en/main/start/start' },
             { text: 'Demos', link: '/en/demos/huge-data' },
-            { text: 'Vue', link: 'https://ja-plus.github.io/stk-table-vue/' },
+            {
+                text: 'Other Versions',
+                items: [
+                    { text: 'Vue', link: 'https://ja-plus.github.io/stk-table-vue/' },
+                    { text: 'React', link: 'https://ja-plus.github.io/stk-table-react/' },
+                ],
+            },
             { text: 'Sponsor', link: '/en/main/other/sponsor' },
         ],
         sidebar: {
