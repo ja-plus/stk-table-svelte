@@ -24,6 +24,7 @@ Support Svelte 5.
 ### [Stk Table Svelte Official](https://ja-plus.github.io/stk-table-svelte/)
 ### [Stk Table Vue Official](https://ja-plus.github.io/stk-table-vue/)
 ### [Stk Table React Official](https://ja-plus.github.io/stk-table-react/)
+### [Stk Table Solid Official](https://ja-plus.github.io/stk-table-solid/)
 
 ## Repo:
 - [Github](https://github.com/ja-plus/stk-table-svelte)

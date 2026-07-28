@@ -25,6 +25,9 @@ hero:
     - theme: alt
       text: React Version
       link: https://ja-plus.github.io/stk-table-react/
+    - theme: alt
+      text: Solid Version
+      link: https://ja-plus.github.io/stk-table-solid/
 
 features:
   - icon: 💡
@@ -42,7 +45,8 @@ features:
   - icon: 🔑
     title: Fully Typed API
     details: Flexible API with complete TypeScript types.
-  - icon: 🧡
+  - icon:
+      src: /assets/svelte-logo.svg
     title: Based on Svelte 5
     details: Powered by Svelte 5 runes, reactive updates, ultimate performance.
 ---

@@ -25,6 +25,9 @@ hero:
     - theme: alt
       text: React 버전
       link: https://ja-plus.github.io/stk-table-react/
+    - theme: alt
+      text: Solid 버전
+      link: https://ja-plus.github.io/stk-table-solid/
 
 features:
   - icon: 💡
@@ -42,7 +45,8 @@ features:
   - icon: 🔑
     title: 완전한 타입 정의 API
     details: 유연한 API 와 완전한 TypeScript 타입 정의.
-  - icon: 🧡
+  - icon:
+      src: /assets/svelte-logo.svg
     title: Svelte 5 기반
     details: Svelte 5 runes 기반, 반응형 업데이트, 궁극의 성능.
 ---
