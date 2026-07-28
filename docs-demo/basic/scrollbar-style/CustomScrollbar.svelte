@@ -32,12 +32,13 @@
         { dataIndex: 'department', title: t('Department'), width: 150 },
         { dataIndex: 'position', title: t('Position'), width: 150 },
         { dataIndex: 'salary', title: t('Salary'), width: 120 },
-        { dataIndex: 'id', title: t('ID'), width: 80 },
-        { dataIndex: 'name', title: t('Name'), width: 120 },
-        { dataIndex: 'age', title: t('Age'), width: 80 },
-        { dataIndex: 'email', title: t('Email'), width: 200 },
-        { dataIndex: 'address', title: t('Address'), width: 250 },
-        { dataIndex: 'phone', title: t('Phone'), width: 150 },
+        // dataIndex 重复的列需要指定唯一 key，否则 svelte keyed each 会因 key 重复报错
+        { key: 'id2', dataIndex: 'id', title: t('ID'), width: 80 },
+        { key: 'name2', dataIndex: 'name', title: t('Name'), width: 120 },
+        { key: 'age2', dataIndex: 'age', title: t('Age'), width: 80 },
+        { key: 'email2', dataIndex: 'email', title: t('Email'), width: 200 },
+        { key: 'address2', dataIndex: 'address', title: t('Address'), width: 250 },
+        { key: 'phone2', dataIndex: 'phone', title: t('Phone'), width: 150 },
     ]);
 </script>
 
