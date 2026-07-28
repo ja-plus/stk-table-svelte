@@ -5,3 +5,4 @@ dist
 .idea
 .vscode
 docs-src/.vitepress/cache
+docs-src/.vitepress/dist
