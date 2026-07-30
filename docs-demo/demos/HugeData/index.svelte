@@ -46,6 +46,13 @@
     let dataSource = $state.raw<DataType[]>([]);
     let footerData = $state<Record<string, any>[]>([]);
 
+    /** Mock data cost time  */
+    let mockDataCost = $state(0);
+    /** Table render cost time */
+    let renderCost = $state(0);
+    /** Table sort cost time */
+    let sortDataCost = $state(0);
+
     const RATING_OPTIONS = ['AAA', 'AA+', 'AA-', 'AA', 'B+', 'B'];
     const CODE_BASE = 10_000_000;
     const createData = (i: number) => {
@@ -73,6 +80,8 @@
         const curDate = new Date();
         const curHour = curDate.getHours();
         const curMinute = curDate.getMinutes();
+
+        let timeStart = performance.now();
         const dataSourceTemp = Array.from({ length: dataSize }).map((_, index) => {
             const data = Object.assign({}, mockDataResult, createData(index)) as any;
             data.bestTime =
@@ -85,15 +94,24 @@
                 String(Random.integer(0, 999)).padStart(3, '0');
             return data;
         });
+        mockDataCost = Math.floor(performance.now() - timeStart); // Mock data cost time
 
-        dataSource = tableSort(
+        timeStart = performance.now();
+        const sortData = tableSort(
             { dataIndex: 'bestTime', sorter: true },
             'desc',
             dataSourceTemp,
             sortConfig,
         );
+        sortDataCost = Math.floor(performance.now() - timeStart);
 
+        dataSource = sortData;
         calculateFootData();
+
+        timeStart = performance.now();
+        tick().then(() => {
+            renderCost = Math.floor(performance.now() - timeStart);
+        });
     }
 
     function handleToggleExpand(row: DataType) {
@@ -289,6 +307,9 @@
         style="width: 70px; margin-left: 6px"
         onchange={handleDataSizeChange}
     />
+    <span style="margin-left: 8px">{t('mockDataCost')}: {mockDataCost}ms</span>
+    <span style="margin-left: 8px">{t('sortDataCost')}: {sortDataCost}ms</span>
+    <span style="margin-left: 8px">{t('renderCost')}: {renderCost}ms</span>
 </div>
 <button class="btn" onclick={() => (timeout ? stopSimulateUpdateData() : simulateUpdateData())}>
     {t('simulateUpdateData')}({timeout ? t('stop') : t('start')})
@@ -349,6 +370,7 @@
 <style lang="less">
 .row {
     display: flex;
+    flex-wrap: wrap;
 }
 
 :global(.stk-table.stack .stk-tbody-main tr) {
