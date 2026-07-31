@@ -1539,11 +1539,17 @@
     // ==================== Fixed Col ====================
     let fixedShadowCols = $state<StkTableColumn<DT>[]>([]);
     let fixedCols = $state<StkTableColumn<DT>[]>([]);
+    /**
+     * 需要自行绘制左边框的右固定列。
+     * 单元格的左边框由左侧相邻单元格的 border-right 提供，右固定列吸附遮挡内容后两者不再相邻，因此需要自行绘制。
+     */
+    let fixedBorderLeftCols = $state<StkTableColumn<DT>[]>([]);
 
     // NOTE: 用 colKey 比较。Svelte5 深层 $state 中，同一列对象经 tableHeaders 与
     // tableHeadersForCalc 两个 $state 根读取会得到不同 proxy，对象身份比较会失效。
     let fixedColKeys = $derived(new Set(fixedCols.map(c => colKeyGen(c))));
     let fixedShadowColKeys = $derived(new Set(fixedShadowCols.map(c => colKeyGen(c))));
+    let fixedBorderLeftColKeys = $derived(new Set(fixedBorderLeftCols.map(c => colKeyGen(c))));
 
     let fixedColClassMap = $derived.by(() => {
         const colMap = new Map<string, string[]>();
@@ -1565,6 +1571,9 @@
                 }
                 if (showShadow) {
                     classList.push('fixed-cell--shadow');
+                }
+                if (fixed === 'right' && fixedBorderLeftColKeys.has(ck)) {
+                    classList.push('fixed-cell--border-left');
                 }
                 colMap.set(ck, classList);
             }
@@ -1630,6 +1639,9 @@
         if (fixedColShadow) {
             fixedShadowCols = leftShadowCol.concat(rightShadowCol).filter(Boolean) as StkTableColumn<DT>[];
         }
+
+        // rightShadowCol 是每层最靠左的、已遮挡内容的右固定列，正是需要绘制左边框的列
+        fixedBorderLeftCols = rightShadowCol.filter(Boolean) as StkTableColumn<DT>[];
 
         fixedCols = fixedColsTemp;
     }
