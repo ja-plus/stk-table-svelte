@@ -2953,6 +2953,8 @@
         autoResizeDebounce = window.setTimeout(() => {
             if (autoResize) {
                 initVirtualScroll();
+                // 容器宽度变化后，需重新计算固定列状态
+                updateFixedShadow();
                 if (typeof autoResize === 'function') {
                     (autoResize as () => void)();
                 }
