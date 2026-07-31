@@ -2,6 +2,14 @@
     "name": "stk-table-svelte",
     "version": "1.0.0-beta.2",
     "description": "High performance realtime virtual table for Svelte",
+    "homepage": "https://ja-plus.github.io/stk-table-svelte/",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/ja-plus/stk-table-svelte"
+    },
+    "bugs": {
+        "url": "https://github.com/ja-plus/stk-table-svelte/issues"
+    },
     "type": "module",
     "svelte": "./src/StkTable/index.ts",
     "types": "./src/StkTable/types/index.ts",

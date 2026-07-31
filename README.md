@@ -1,6 +1,6 @@
 <p align="center">
     <a href="https://ja-plus.github.io/stk-table-svelte/">
-        <img src="./docs-src/public/assets/logo.svg" width="152">
+        <img src="https://raw.githubusercontent.com/ja-plus/stk-table-svelte/main/docs-src/public/assets/logo.svg" width="152">
     </a>
     <h3 align='center'>Stk Table Svelte</h3>
     <p align="center">
