@@ -60,8 +60,8 @@ devDependencies:
     specifier: 2.0.0-alpha.18
     version: 2.0.0-alpha.18(@types/node@26.1.1)(less@4.8.0)(typescript@7.0.2)
   vitepress-demo-plugin:
-    specifier: file:./packages/vitepress-demo-plugin/packages/plugin
-    version: file:packages/vitepress-demo-plugin/packages/plugin(shiki@4.3.1)(vitepress@2.0.0-alpha.18)(vue@3.5.40)
+    specifier: 1.8.0
+    version: 1.8.0(shiki@4.3.1)(vitepress@2.0.0-alpha.18)(vue@3.5.40)
   vitest:
     specifier: ^4.1.10
     version: 4.1.10(@types/node@26.1.1)(jsdom@25.0.1)(vite@8.1.5)
@@ -2437,6 +2437,18 @@ packages:
       vite: 8.1.5(@types/node@26.1.1)(less@4.8.0)
     dev: true
 
+  /vitepress-demo-plugin@1.8.0(shiki@4.3.1)(vitepress@2.0.0-alpha.18)(vue@3.5.40):
+    resolution: {integrity: sha512-HtEsYPRtKTJNbC1kE+LmA8sL+nwKFNc9lkox8XtTS97LKIbr/GaXhlA+ocANc7TWhRsDEfNiCjiVm++CwSxaGg==}
+    peerDependencies:
+      shiki: '*'
+      vitepress: '*'
+      vue: ^3.2.0
+    dependencies:
+      shiki: 4.3.1
+      vitepress: 2.0.0-alpha.18(@types/node@26.1.1)(less@4.8.0)(typescript@7.0.2)
+      vue: 3.5.40(typescript@7.0.2)
+    dev: true
+
   /vitepress@2.0.0-alpha.18(@types/node@26.1.1)(less@4.8.0)(typescript@7.0.2):
     resolution: {integrity: sha512-Lk1G2/QqSf+MwNLICl9fmzWOtoCEwjZoWgaQy41QvWTfcGpLE9XwJDbcCyES/9rj6R2g1zFqFvLVkYKLLDALFw==}
     hasBin: true
@@ -2648,18 +2660,4 @@ packages:
 
   /zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
-    dev: true
-
-  file:packages/vitepress-demo-plugin/packages/plugin(shiki@4.3.1)(vitepress@2.0.0-alpha.18)(vue@3.5.40):
-    resolution: {directory: packages/vitepress-demo-plugin/packages/plugin, type: directory}
-    id: file:packages/vitepress-demo-plugin/packages/plugin
-    name: vitepress-demo-plugin
-    peerDependencies:
-      shiki: '*'
-      vitepress: '*'
-      vue: ^3.2.0
-    dependencies:
-      shiki: 4.3.1
-      vitepress: 2.0.0-alpha.18(@types/node@26.1.1)(less@4.8.0)(typescript@7.0.2)
-      vue: 3.5.40(typescript@7.0.2)
     dev: true
