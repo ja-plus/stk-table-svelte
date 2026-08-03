@@ -1257,14 +1257,28 @@
         privateSetTreeExpand(row, { expand, col, isClick: true });
     }
 
-    function privateSetTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option: { expand?: boolean; col?: any; isClick: boolean }) {
+    type SetTreeExpandOption = {
+        expand?: boolean;
+        all?: boolean;
+        level?: number;
+    };
+
+    function setDescendantsToLevel(row: DT, currentLevel: number, targetLevel: number, expanded: boolean) {
+        if (!row.children || currentLevel > targetLevel) return;
+        for (const child of row.children) {
+            setNodeExpanded(child, expanded, currentLevel);
+            setDescendantsToLevel(child, currentLevel + 1, targetLevel, expanded);
+        }
+    }
+
+    function privateSetTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option: SetTreeExpandOption & { col?: any; isClick: boolean }) {
         const rowKeyOrRowArr: (UniqKey | DT)[] = Array.isArray(row) ? row : [row];
 
         const tempData = dataSourceCopy.slice();
         for (let i = 0; i < rowKeyOrRowArr.length; i++) {
             const rowKeyOrRow = rowKeyOrRowArr[i];
             let rk: UniqKey;
-            if (typeof rowKeyOrRow === 'string') {
+            if (typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number') {
                 rk = rowKeyOrRow;
             } else {
                 rk = rowKeyGenFn(rowKeyOrRow);
@@ -1277,13 +1291,26 @@
 
             const targetRow = tempData[index];
             const level = targetRow.__T_LV__ || 0;
+            const wasExpanded = Boolean(targetRow.__T_EXP__);
             let expanded = option?.expand;
             if (expanded === void 0) {
                 expanded = !targetRow.__T_EXP__;
             }
+            if (option.all || option.level !== void 0) {
+                const targetLevel = option.all ? Infinity : option.level || 0;
+                setDescendantsToLevel(targetRow, level + 1, targetLevel, expanded);
+            }
             if (expanded) {
-                const childrenNodes = expandTreeNode(targetRow, level);
-                tempData.splice(index + 1, 0, ...childrenNodes);
+                if (wasExpanded) {
+                    // already expanded, rebuild the flattened subtree so newly expanded
+                    // descendants are inserted into the visible data source
+                    const deleteCount = foldTreeNode(index, tempData, level);
+                    const childrenNodes = expandTreeNode(targetRow, level);
+                    tempData.splice(index + 1, deleteCount, ...childrenNodes);
+                } else {
+                    const childrenNodes = expandTreeNode(targetRow, level);
+                    tempData.splice(index + 1, 0, ...childrenNodes);
+                }
             } else {
                 const deleteCount = foldTreeNode(index, tempData, level);
                 tempData.splice(index + 1, deleteCount);
@@ -1300,7 +1327,7 @@
         onDataSourceChange();
     }
 
-    function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand?: boolean }) {
+    function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) {
         privateSetTreeExpand(row, { ...option, isClick: false });
     }
 
@@ -1386,9 +1413,9 @@
         setRowExpand(row, isExpand, { col });
     }
 
-    function setRowExpand(rowKeyOrRow: string | undefined | DT, expand?: boolean | null, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
+    function setRowExpand(rowKeyOrRow: string | number | undefined | DT, expand?: boolean | null, data?: { col?: StkTableColumn<DT>; silent?: boolean }) {
         let rk: UniqKey;
-        if (typeof rowKeyOrRow === 'string') {
+        if (typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number') {
             rk = rowKeyOrRow;
         } else {
             rk = rowKeyGenFn(rowKeyOrRow);
