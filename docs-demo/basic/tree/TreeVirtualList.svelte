@@ -8,9 +8,30 @@
 
     const columns: StkTableColumn<any>[] = [
         { type: 'tree-node', title: t('area'), dataIndex: 'area', width: 200 },
-        { title: t('gdp'), dataIndex: 'gdp', align: 'right', width: 100, sorter: true, sortType: 'number' },
-        { title: t('population'), dataIndex: 'population', align: 'right', width: 100, sorter: true, sortType: 'number' },
-        { title: t('gdpPerCapita'), dataIndex: 'gdpPerCapita', align: 'right', width: 200, sorter: true, sortType: 'number' },
+        {
+            title: t('gdp'),
+            dataIndex: 'gdp',
+            align: 'right',
+            width: 100,
+            sorter: true,
+            sortType: 'number',
+        },
+        {
+            title: t('population'),
+            dataIndex: 'population',
+            align: 'right',
+            width: 100,
+            sorter: true,
+            sortType: 'number',
+        },
+        {
+            title: t('gdpPerCapita'),
+            dataIndex: 'gdpPerCapita',
+            align: 'right',
+            width: 200,
+            sorter: true,
+            sortType: 'number',
+        },
     ];
     let dataSource = $state.raw(getDataSource2());
 
@@ -39,6 +60,10 @@
         stkTableRef?.setHighlightDimRow([area1_0.area]);
     }
 
+    function toggleArea0() {
+        stkTableRef?.setTreeExpand(['Area0']);
+    }
+
     function updateArea0_1Cell() {
         const dataSourceTemp = dataSource.slice();
         const area0_1 = dataSourceTemp[0].children[1];
@@ -52,4 +77,5 @@
 <button class="btn" onclick={updateArea0}>update Area0</button>
 <button class="btn" onclick={updateArea0_0}>update Area0-0</button>
 <button class="btn" onclick={updateArea0_1Cell}>update Area0-1 gdp</button>
+<button class="btn" onclick={toggleArea0}>Toggle Area0</button>
 <StkTable bind:this={stkTableRef} style="height: 200px" rowKey="area" virtual {columns} {dataSource}></StkTable>

@@ -9,39 +9,46 @@
 
     let stkTableRef: any;
 
-    // 定义表格列
-    const columns: StkTableColumn<RowDataType>[] = [
+    let columns = $state<StkTableColumn<RowDataType>[]>([
         {
             title: 'ID',
             dataIndex: 'id',
-            width: 50,
+            width: 100,
             type: 'tree-node',
             className: 'panel-title',
             fixed: 'left',
             mergeCells({ row }) {
-                if (row.children) {
+                if (row.children && !row.level) {
                     return { colspan: 2 };
                 }
             },
         },
         { title: t('name'), dataIndex: 'name', width: 100, fixed: 'left' },
-        { title: t('age'), dataIndex: 'age', width: 80, sorter: true, sortConfig: { sortChildren: true } },
+        {
+            title: t('age'),
+            dataIndex: 'age',
+            width: 80,
+            sorter: true,
+            sortConfig: { sortChildren: true },
+        },
         { title: t('address'), dataIndex: 'address', width: 200 },
         { title: t('email'), dataIndex: 'email', width: 200 },
         { title: t('phone'), dataIndex: 'phone', width: 150 },
         { title: t('website'), dataIndex: 'website', width: 200 },
         { title: t('company'), dataIndex: 'company', width: 200 },
-    ];
+    ]);
 
     // 初始化表格数据
     let tableData = $state<RowDataType[]>([
         {
             id: "People's Republic of China",
             key: '1',
+            level: 0,
             children: [
                 {
                     key: '1-1',
                     id: '1',
+                    level: 1,
                     name: 'Beijing',
                     age: 28,
                     address: 'Beijing',
@@ -49,10 +56,25 @@
                     phone: '13800000000',
                     website: 'www.beijing.com',
                     company: 'Beijing Company',
+                    children: [
+                        {
+                            key: '1-1-1',
+                            id: '1-1',
+                            level: 2,
+                            name: 'Haidian District',
+                            age: 28,
+                            address: 'Haidian District, Beijing, China',
+                            email: 'haidian@example.com',
+                            phone: '13800000001',
+                            website: 'www.haidian.com',
+                            company: 'Haidian District Company',
+                        },
+                    ],
                 },
                 {
                     key: '1-2',
                     id: '2',
+                    level: 1,
                     name: 'Shanghai',
                     age: 32,
                     address: 'Shanghai',
@@ -64,6 +86,7 @@
                 {
                     key: '1-3',
                     id: '3',
+                    level: 1,
                     name: 'Guangzhou',
                     age: 36,
                     address: 'Guangzhou',
@@ -75,6 +98,7 @@
                 {
                     key: '1-4',
                     id: '4',
+                    level: 1,
                     name: 'Shenzhen',
                     age: 38,
                     address: 'Shenzhen',
@@ -88,10 +112,12 @@
         {
             id: 'The Russian Federation',
             key: '2',
+            level: 0,
             children: [
                 {
                     key: '2-1',
                     id: '1',
+                    level: 1,
                     name: 'Moscow',
                     age: 35,
                     address: 'Moscow',
@@ -103,6 +129,7 @@
                 {
                     key: '2-2',
                     id: '2',
+                    level: 1,
                     name: 'Saint Petersburg',
                     age: 38,
                     address: 'Saint Petersburg',
@@ -114,6 +141,7 @@
                 {
                     key: '2-3',
                     id: '3',
+                    level: 1,
                     name: 'Kazan',
                     age: 36,
                     address: 'Kazan',
@@ -125,6 +153,7 @@
                 {
                     key: '2-4',
                     id: '4',
+                    level: 1,
                     name: 'Novosibirsk',
                     age: 34,
                     address: 'Novosibirsk',
@@ -138,10 +167,12 @@
         {
             id: 'United States of America',
             key: '3',
+            level: 0,
             children: [
                 {
                     key: '3-1',
                     id: '1',
+                    level: 1,
                     name: 'New York',
                     age: 35,
                     address: 'New York',
@@ -153,6 +184,7 @@
                 {
                     key: '3-2',
                     id: '2',
+                    level: 1,
                     name: 'Los Angeles',
                     age: 40,
                     address: 'Los Angeles',
@@ -164,6 +196,7 @@
                 {
                     key: '3-3',
                     id: '3',
+                    level: 1,
                     name: 'Chicago',
                     age: 38,
                     address: 'Chicago',
@@ -175,6 +208,7 @@
                 {
                     key: '3-4',
                     id: '4',
+                    level: 1,
                     name: 'San Francisco',
                     age: 42,
                     address: 'San Francisco',
@@ -188,10 +222,12 @@
         {
             id: 'United Kingdom of Great Britain and Northern Ireland',
             key: '4',
+            level: 0,
             children: [
                 {
                     key: '4-1',
                     id: '1',
+                    level: 1,
                     name: 'London',
                     age: 45,
                     address: 'London',
@@ -203,6 +239,7 @@
                 {
                     key: '4-2',
                     id: '2',
+                    level: 1,
                     name: 'Manchester',
                     age: 42,
                     address: 'Manchester',
@@ -214,6 +251,7 @@
                 {
                     key: '4-3',
                     id: '3',
+                    level: 1,
                     name: 'Liverpool',
                     age: 40,
                     address: 'Liverpool',
@@ -225,6 +263,7 @@
                 {
                     key: '4-4',
                     id: '4',
+                    level: 1,
                     name: 'Leeds',
                     age: 42,
                     address: 'Leeds',
@@ -238,10 +277,12 @@
         {
             id: 'French Republic',
             key: '5',
+            level: 0,
             children: [
                 {
                     key: '5-1',
                     id: '1',
+                    level: 1,
                     name: 'Paris',
                     age: 48,
                     address: 'Paris',
@@ -253,6 +294,7 @@
                 {
                     key: '5-2',
                     id: '2',
+                    level: 1,
                     name: 'Lyon',
                     age: 44,
                     address: 'Lyon',
@@ -264,6 +306,7 @@
                 {
                     key: '5-3',
                     id: '3',
+                    level: 1,
                     name: 'Marseille',
                     age: 46,
                     address: 'Marseille',
@@ -275,6 +318,7 @@
                 {
                     key: '5-4',
                     id: '4',
+                    level: 1,
                     name: 'Nice',
                     age: 44,
                     address: 'Nice',
@@ -304,13 +348,14 @@
         bind:this={stkTableRef}
         style="max-height: 350px"
         rowKey="key"
-        bordered="h"
+        bordered="body-h"
         showOverflow
+        colResizable
         rowActive={{
-            disabled: (row: any) => Boolean(row.children),
+            disabled: (row: any) => Boolean(row.children && !row.level),
         }}
-        rowClassName={(row: any) => (row.children ? 'panel-header-row' : '')}
-        emptyCellText={({ row }: any) => (row.children ? '' : '--')}
+        rowClassName={(row: any) => (row.children && !row.level ? 'panel-header-row' : '')}
+        emptyCellText={({ row }: any) => (row.children && !row.level ? '' : '--')}
         treeConfig={{ defaultExpandKeys: ['1'] }}
         selectedCellRevokable={false}
         {columns}
