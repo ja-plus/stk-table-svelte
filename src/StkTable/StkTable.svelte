@@ -1261,6 +1261,7 @@
         expand?: boolean;
         all?: boolean;
         level?: number;
+        parents?: boolean;
     };
 
     function setDescendantsToLevel(row: DT, currentLevel: number, targetLevel: number, expanded: boolean) {
@@ -1328,7 +1329,52 @@
     }
 
     function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: SetTreeExpandOption) {
+        if (option?.parents) {
+            const rowKeyOrRow = Array.isArray(row) ? row[0] : row;
+            const rowKey = typeof rowKeyOrRow === 'string' || typeof rowKeyOrRow === 'number' ? rowKeyOrRow : rowKeyGenFn(rowKeyOrRow);
+            const path = findTreePath(dataSource, rowKey);
+            if (!path) {
+                console.warn('treeExpandRow failed.rowKey:', rowKey);
+                return;
+            }
+            const expanded = option?.expand !== false;
+            const target = path[path.length - 1];
+            const keys = path.slice(0, -1).map(it => rowKeyGenFn(it));
+            // 展开时若目标行自身有子节点则一并展开；收起时仅处理父节点，目标行自身状态不变
+            // en: when expanding, also expand the target row itself if it has children; when collapsing, only ancestors are handled
+            if (expanded && target.children?.length) keys.push(rowKeyGenFn(target));
+            if (!keys.length) return;
+            // 展开时从根到目标逐级展开；收起时逆序处理，避免先折叠根节点导致其余节点从可见数据中移除而查找失败
+            // en: expand from root to target; collapse in reverse order, otherwise collapsing the root first removes the rest nodes from visible data
+            if (!expanded) keys.reverse();
+            privateSetTreeExpand(keys, { expand: expanded, isClick: false });
+            return;
+        }
         privateSetTreeExpand(row, { ...option, isClick: false });
+    }
+
+    /**
+     * 在原始树形数据中查找目标节点，返回从根节点到目标节点的完整路径（含目标节点自身）
+     * en: Find target node in raw tree data, return the full path from root to target node (target included)
+     * @returns full path including target, or null if target not found
+     */
+    function findTreePath(data: DT[], targetKey: UniqKey): DT[] | null {
+        const path: DT[] = [];
+        function dfs(list: DT[]): boolean {
+            for (const item of list) {
+                if (rowKeyGenFn(item) === targetKey) {
+                    path.push(item);
+                    return true;
+                }
+                if (item.children) {
+                    path.push(item);
+                    if (dfs(item.children)) return true;
+                    path.pop();
+                }
+            }
+            return false;
+        }
+        return dfs(data) ? path : null;
     }
 
     function setNodeExpanded(row: DT, expanded: boolean, level?: number) {
