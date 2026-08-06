@@ -562,21 +562,142 @@
     let isMultiLevelHeader = $derived(tableHeaders.length > 1);
 
     /**
-     * Multi-level header virtualX params: compute start/end by top-level column groups
+     * Max iterations for merge-cells visible range correction.
+     * Valid (non-overlapping) merge configs converge in at most 2 rounds (1 expand + 1 verify);
+     * this limit only guards pathological configs like overlapping merge regions.
+     */
+    const MAX_MERGE_RANGE_EXPAND_ITERATIONS = 8;
+
+    /**
+     * Merge cols that need visible range correction. Depends only on tableHeaderLast (columns change),
+     * cached to avoid repeated collection on high-frequency buildColMergeRange calls (data update, vertical window change).
+     * Returns null when no correction is needed.
+     */
+    let virtualX_mergeColsInfo = $derived.by(() => {
+        const headers = tableHeaderLast;
+        const headerLength = headers.length;
+        // right fixed cols always render at the end of the visible area, not involved in main visible range correction
+        let maxColIndex = headerLength;
+        const mergeCols: { col: PrivateStkTableColumn<PrivateRowDT>; index: number }[] = [];
+        for (let i = 0; i < headerLength; i++) {
+            const col = headers[i];
+            if (maxColIndex === headerLength && col.fixed === 'right') maxColIndex = i;
+            // fixed cols always render, no need to correct visible range
+            if (col.mergeCells && !col.fixed) mergeCols.push({ col, index: i });
+        }
+        if (!mergeCols.length || !maxColIndex) return null;
+        return { headerLength, maxColIndex, mergeCols };
+    });
+
+    /**
+     * Collect column merge (colspan) ranges of a row set
+     * @param rows row data
+     * @param rowIndexBase start value of the rowIndex param passed to mergeCells
+     */
+    function buildColMergeRange(rows: PrivateRowDT[], rowIndexBase: number) {
+        const mergeColsInfo = virtualX_mergeColsInfo;
+        if (!mergeColsInfo) return null;
+        const { headerLength, maxColIndex, mergeCols } = mergeColsInfo;
+
+        const leftReach = new Int32Array(headerLength).fill(-1);
+        const rightEnd = new Int32Array(headerLength);
+        for (let r = 0; r < rows.length; r++) {
+            const row = rows[r];
+            for (let m = 0; m < mergeCols.length; m++) {
+                const { col, index } = mergeCols[m];
+                if (index >= maxColIndex) break;
+                const { colspan = 1 } = col.mergeCells!({ row, col, rowIndex: rowIndexBase + r, colIndex: index }) || {};
+                if (colspan > 1) {
+                    const end = Math.min(index + colspan, maxColIndex);
+                    for (let c = index; c < end; c++) {
+                        if (leftReach[c] === -1 || index < leftReach[c]) leftReach[c] = index;
+                        if (end > rightEnd[c]) rightEnd[c] = end;
+                    }
+                }
+            }
+        }
+        return { leftReach, rightEnd };
+    }
+
+    /**
+     * Column merge coverage of full data (lazy).
+     * Only traverses full data when Y virtual scroll is off (visible rows = full data) and consumed;
+     * depends on dataSourceCopy and columns, auto recompute on data/columns change.
+     * In virtual + virtualX mode consumers use the visible-rows branch, this derived returns null directly,
+     * avoiding a wasted O(rows × mergeCols) full mergeCells traversal.
+     */
+    let virtualX_colMergeRangeFull = $derived.by(() => {
+        if (!virtualX_on || virtual_on) return null;
+        return buildColMergeRange(dataSourceCopy, 0);
+    });
+
+    /**
+     * virtual-x column merge coverage.
+     * When Y virtual scroll is on, only visible rows are computed (rowIndex consistent with mergeCells param at render time);
+     * otherwise uses the full-data lazy cache (visible rows = full data).
+     */
+    let virtualX_colMergeRange = $derived.by(() => {
+        if (!virtualX_on) return null;
+        if (virtual_on) {
+            return buildColMergeRange(virtual_dataSourcePart, 0);
+        }
+        return virtualX_colMergeRangeFull;
+    });
+
+    /**
+     * Visible column range corrected by column merges.
+     * The anchor col of a merged cell may have scrolled out of the viewport (while the merge region still covers visible cols),
+     * or the merge region may exceed the right edge of the viewport; the range needs to be expanded to fully render the merged cell.
+     */
+    let virtualX_colRange = $derived.by(() => {
+        let { startIndex, endIndex } = virtualScrollX;
+        const mergeRange = virtualX_colMergeRange;
+        if (mergeRange) {
+            const { leftReach, rightEnd } = mergeRange;
+            const len = leftReach.length;
+            // the expanded range may introduce new merged cells, iterate until stable (valid configs at most 2 rounds, limit guards pathological configs)
+            for (let k = 0; k < MAX_MERGE_RANGE_EXPAND_ITERATIONS; k++) {
+                let newStart = startIndex;
+                let newEnd = endIndex;
+                const loopEnd = Math.min(endIndex, len);
+                for (let i = Math.max(0, startIndex); i < loopEnd; i++) {
+                    const reach = leftReach[i];
+                    if (reach > -1 && reach < newStart) newStart = reach;
+                    if (rightEnd[i] > newEnd) newEnd = rightEnd[i];
+                }
+                if (newStart === startIndex && newEnd === endIndex) break;
+                startIndex = newStart;
+                endIndex = newEnd;
+            }
+        }
+        return { startIndex, endIndex };
+    });
+
+    /**
+     * Multi-level header virtualX params: compute start/end by top-level column groups.
+     * Range is based on the merge-corrected virtualX_colRange to ensure merged cells are fully rendered.
      */
     let theadVirtualX = $derived.by(() => {
-        if (!virtualX_on || !isMultiLevelHeader) {
-            return {
-                startIndex: virtualScrollX.startIndex,
-                endIndex: virtualScrollX.endIndex,
-                offsetLeft: virtualScrollX.offsetLeft,
-            };
+        if (!virtualX_on) {
+            const { startIndex, endIndex, offsetLeft } = virtualScrollX;
+            return { startIndex, endIndex, offsetLeft };
         }
-        const { scrollLeft, containerWidth } = virtualScrollX;
+
+        const { startIndex, endIndex } = virtualX_colRange;
+
+        if (!isMultiLevelHeader) {
+            // single-level header: offsetLeft is the width sum of all non-fixed cols before the start col
+            const { nonFixedCols } = getColWidthCache(tableHeaderLast);
+            const found = binarySearch(nonFixedCols, mid => (nonFixedCols[mid].index < startIndex ? -1 : 1));
+            const offsetLeft = found > 0 ? nonFixedCols[found - 1].cumWidth : 0;
+            return { startIndex, endIndex, offsetLeft };
+        }
+
+        // multi-level header: keep top-level groups intersecting the corrected visible range
         const topLevelCols = tableHeaders[0];
         const totalLeafCount = tableHeaderLast.length;
 
-        let theadStartIndex = 0;
+        let theadStartIndex = totalLeafCount;
         let theadEndIndex = totalLeafCount;
         let theadOffsetLeft = 0;
         let cumLeft = 0;
@@ -586,24 +707,23 @@
             const col = topLevelCols[i];
             if (col.fixed === 'left' || col.fixed === 'right') continue;
 
+            const groupStart = col.__LF_S__ ?? 0;
+            const groupEnd = col.__LF_E__ ?? groupStart + 1;
             const groupWidth = col.__W__ || getCalculatedColWidth(col);
-            const groupRight = cumLeft + groupWidth;
 
-            if (!foundStart && groupRight > scrollLeft) {
+            if (!foundStart && groupEnd > startIndex) {
                 foundStart = true;
-                theadStartIndex = col.__LF_S__ ?? 0;
+                theadStartIndex = groupStart;
                 theadOffsetLeft = cumLeft;
             }
-            cumLeft = groupRight;
-
-            theadEndIndex = col.__LF_E__ ?? totalLeafCount;
-            if (foundStart && groupRight >= scrollLeft + containerWidth) {
-                break;
+            if (foundStart) {
+                if (groupStart >= endIndex) break;
+                theadEndIndex = groupEnd;
             }
+            cumLeft += groupWidth;
         }
 
         if (!foundStart) {
-            theadStartIndex = totalLeafCount;
             theadOffsetLeft = cumLeft;
         }
 
@@ -612,7 +732,8 @@
 
     let virtualX_columnPart = $derived.by((): PrivateStkTableColumn<PrivateRowDT>[] => {
         if (virtualX_on) {
-            const { startIndex, endIndex } = virtualScrollX;
+            // use the merge-corrected visible range
+            const { startIndex, endIndex } = virtualX_colRange;
             const maxIndex = tableHeaderLast.length;
             const validEndIndex = Math.min(endIndex, maxIndex);
             const validStartIndex = Math.min(startIndex, maxIndex);
@@ -701,7 +822,8 @@
 
     let virtualX_offsetRight = $derived.by(() => {
         if (!virtualX_on) return 0;
-        const eIdx = isMultiLevelHeader ? theadVirtualX.endIndex : virtualScrollX.endIndex;
+        // multi-level header uses theadEndIndex, single-level uses the merge-corrected endIndex
+        const eIdx = isMultiLevelHeader ? theadVirtualX.endIndex : virtualX_colRange.endIndex;
         let w = 0;
         for (let i = eIdx; i < tableHeaderLast.length; i++) {
             const col = tableHeaderLast[i];

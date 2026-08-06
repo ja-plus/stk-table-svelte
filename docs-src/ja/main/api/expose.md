@@ -239,7 +239,7 @@ function setTreeExpand(row: (UniqKey | DT) | (UniqKey | DT)[], option?: { expand
 
 - `option.all` <Badge type="tip" text="^1.0.4" />
 - `option.level` <Badge type="tip" text="^1.0.4" />
-- `option.parents` <Badge type="tip" text="^1.0.5" />
+- `option.parents` <Badge type="tip" text="^1.1.0" />
 
 ### getSelectedArea
 選択されたセル情報を取得
